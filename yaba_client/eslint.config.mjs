@@ -10,7 +10,18 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+	...compat.extends("next/core-web-vitals", "next/typescript"),
+	{
+		"no-restricted-imports": "off",
+		"@typescript-eslint/no-restricted-imports": [
+  			"warn",
+  			{
+    			"name": "react-redux",
+    			"importNames": ["useSelector", "useDispatch"],
+  		  		"message": "Use typed hooks `useAppDispatch` and `useAppSelector` instead."
+			}
+		]
+	}
 ];
 
 export default eslintConfig;
