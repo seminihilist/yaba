@@ -1,8 +1,12 @@
+'use client';
 
+import BottomRightPlusButtonComponent from "../components/BottomRightPlusButtonComponent";
 
 export default function TransactionsPage() {
 	return (
 		// Nothing
-		<p>Transactions!</p>
+		<>
+			<BottomRightPlusButtonComponent onClick={(e) => null} />
+		</>
 	);
 }

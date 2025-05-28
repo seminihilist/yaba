@@ -63,3 +63,10 @@ export type BudgetState = {
 	ownerUsername: string;
 	memberUsernames: Array<string>;
 }
+
+export type AppState = {
+	/**
+	 * The name of the currently open dialog box. This will be an empty string if there is no open dialog box.
+	 */
+	openDialog: string;
+}

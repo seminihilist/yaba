@@ -7,8 +7,8 @@ import type { BudgetSection } from "@/lib/types";
  */
 export default function BudgetSectionComponent({ section }: Readonly<{ section: BudgetSection }>) {
 	return (
-		<div style={{ backgroundColor: `rgb(${section.color[0]}, ${section.color[1]}, ${section.color[2]})` }} className="">
-			<h2>{section.name}</h2>
+		<div style={{ backgroundColor: `rgb(${section.color[0]}, ${section.color[1]}, ${section.color[2]})` }} className="rounded-s">
+			<h1 className="text-4xl">{section.name}</h1>
 		</div>
 	)
 }

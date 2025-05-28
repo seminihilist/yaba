@@ -1,6 +1,6 @@
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { AppStore, type AppDispatch, type RootState } from "../lib/store";
+import { type AppStore, type AppDispatch, type RootState } from "../lib/store";
 
-export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
-export const useAppSelector = useSelector.withTypes<RootState>();
-export const useAppStore 	= useStore.withTypes<AppStore>();
+export const useAppDispatch = useDispatch //useDispatch.withTypes<AppDispatch>();
+export const useAppSelector = useSelector //useSelector.withTypes<RootState>();
+export const useAppStore 	= useStore    //useStore.withTypes<AppStore>();

@@ -31,7 +31,9 @@ export default function BudgetLayout({ children }: Readonly<{ children: React.Re
 	return (
 		<StoreProvider>
 			<NavigationContainer isMobile={isMobile}>
-				{children}
+				<div className="bg-amber-100 w-100 h-100 p-2">
+					{children}
+				</div>
 			</NavigationContainer>
 		</StoreProvider>
 	);
