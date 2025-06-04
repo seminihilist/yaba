@@ -1,3 +1,5 @@
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -22,13 +24,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+  	return (
+		<html lang="en">
+			<body
+				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+			>
+				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
+					{children}
+				</AppRouterCacheProvider>
+			</body>
+		</html>
+  	);
 }

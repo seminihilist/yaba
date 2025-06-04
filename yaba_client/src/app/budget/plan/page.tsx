@@ -7,7 +7,9 @@ import BudgetSectionComponent from "./components/BudgetSectionComponent";
 import BudgetSectionListComponent from "./components/BudgetSectionListComponent";
 import BottomRightPlusButtonComponent from "../components/BottomRightPlusButtonComponent";
 
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, TextField } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, TextField, IconButton } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { colors } from "@/lib/color_utils";
 
 export default function PlanPage() {
 	const openDialogName: string = useAppSelector((state: RootState) => state.app.openDialog);
@@ -40,7 +42,7 @@ export default function PlanPage() {
 								"type": "budget/addSection",
 								"payload": {
 									"name": sectionName,
-									"databaseID": 123
+									"color": colors[Math.round(Math.random() * (colors.length - 1))],
 								}
 							});
 

@@ -9,16 +9,12 @@ import { RootState } from "@/lib/store";
    buttons to edit or delete the transaction.  
  */
 export default function BudgetSectionListComponent() {
-	console.log(useAppSelector((state: RootState) => state))
-
-	const sections: Array<BudgetSection> = useAppSelector((state: RootState) => state.budget.sections)
-
-	console.log(sections)
+	const sectionsAndIDs = Object.entries(useAppSelector((state: RootState) => state.budget.sections));
 
 	return (
 		// Nothing
 		<>
-			{sections.map((section, index) => (<BudgetSectionComponent section={section} key={index} />))}
+			{sectionsAndIDs.map(([id, section], index) => (<BudgetSectionComponent section={section} key={index} />))}
 		</>
 	);
 }

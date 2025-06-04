@@ -1,29 +1,31 @@
 'use strict';
 
-import { combineReducers, configureStore, createSlice, ListenerMiddleware, Middleware, PayloadAction, Store, ThunkMiddleware, Tuple } from "@reduxjs/toolkit";
-import { AppState, BudgetSection, BudgetState } from "./types";
+import { combineReducers, configureStore, createSelector, createSlice, ListenerMiddleware, Middleware, PayloadAction, Store, ThunkMiddleware, Tuple } from "@reduxjs/toolkit";
+import { AppState, BudgetItem, BudgetSection, BudgetState } from "./types";
 import { useAppDispatch } from "@/app/hooks";
 
-/**
- * Mock data to be replaced with real data from the server later
- */
-//const budgetInitialState: BudgetState = 
-//
-//const appInitialState: AppState = {
-//	openDialog: ""
-//}
 
 export const makeStore = () => {
 	const budgetInitialState: BudgetState = (() => {
-		const fallback = {
-			sections: [{
+		const fallback: BudgetState = {
+			sections: {0: {
 				name: "Food",
-				databaseID: -1,
-				color: [200, 50, 100],
-				items: []
-			}],
-			ownerUsername: "TheNameless",
-			memberUsernames: ["TheNameless"]
+				databaseID: 0,
+				color: "red",
+				itemIDs: [1]
+			}},
+			items: {1: {
+				name: "Onions",
+				amount: 500,
+				databaseID: 1,
+				isCumulative: false,
+				sectionID: 0,
+				transactionIDs: []
+			}},
+			transactions: {},
+			transactionGroups: {},
+			idCounter: 2,
+			availableMoney: 0
 		}
 
 		if (typeof window === "undefined") {
@@ -51,37 +53,188 @@ export const makeStore = () => {
 		name: "budget",
 		initialState: budgetInitialState,
 		reducers: {
-			addSection: (state, action: PayloadAction<{ name: string, databaseID: number }>) => {
-				state.sections.push({
+			addSection: (state, action: PayloadAction<{ name: string, color: string }>) => {
+				state.sections[state.idCounter] = {
 					name: action.payload.name,
-					databaseID: action.payload.databaseID,
-					color: [128, 128, 128],
-					items: []
-				})
+					databaseID: state.idCounter,
+					color: action.payload.color,
+					itemIDs: []
+				};
+
+				state.idCounter++;
 			},
 			
 			deleteSection: (state, action: PayloadAction<{ databaseID: number }>) => {
-				state.sections = state.sections.filter((section: BudgetSection) => section.databaseID !== action.payload.databaseID);
+				Object.entries(state.items).forEach(([id, item]) => {
+					if (item === undefined) return;
+
+					if (item.sectionID === action.payload.databaseID) { // Then this item is part of the section being deleted
+						delete state.items[parseInt(id)];
+					}
+				})
+
+				delete state.sections[action.payload.databaseID];
 			},
 
-			addItem: (state, action: PayloadAction<{ sectionDatabaseID: number, itemName: string, itemDatabaseID: number, itemAmount: number, itemIsCumulative: boolean }>) => {
-				state.sections.forEach((section: BudgetSection) => {
-					if (section.databaseID === action.payload.sectionDatabaseID) {
-						// If this is the correct section, add the item to the end
-						section.items.push({
-							name: action.payload.itemName,
-							databaseID: action.payload.itemDatabaseID,
-							amount: action.payload.itemAmount,
-							isCumulative: action.payload.itemIsCumulative
-						})
-					}
-				});
+			renameSection: (state, action: PayloadAction<{ databaseID: number, newName: string }>) => {
+				const section = state.sections[action.payload.databaseID]
+				
+				if (section !== undefined) section.name = action.payload.newName
+			},
+
+			recolorSection: (state, action: PayloadAction<{ databaseID: number, newColor: string }>) => {
+				const section = state.sections[action.payload.databaseID]
+				
+				if (section !== undefined) section.color = action.payload.newColor
+			},
+
+			addItem: (state, action: PayloadAction<{ sectionDatabaseID: number, itemName: string, itemAmount: number }>) => {
+				state.items[state.idCounter] = {
+					name: action.payload.itemName,
+					databaseID: state.idCounter,
+					amount: action.payload.itemAmount,
+					isCumulative: false, // This feature has been scrapped
+					sectionID: action.payload.sectionDatabaseID,
+					transactionIDs: []
+				};
+
+				const section = state.sections[action.payload.sectionDatabaseID];
+
+				if (section !== undefined) section.itemIDs.push(state.idCounter);
+
+				state.idCounter++;
+			},
+
+			alterItem: (state, action: PayloadAction<{ databaseID: number, newName: string, newAmount: number }>) => {
+				const item = state.items[action.payload.databaseID];
+
+				if (item !== undefined) {
+					item.name = action.payload.newName;
+					item.amount = action.payload.newAmount;
+				}
 			},
 
 			deleteItem: (state, action: PayloadAction<{ databaseID: number }>) => {
-				state.sections.forEach((section: BudgetSection) => {
-					section.items = section.items.filter((item) => item.databaseID !== action.payload.databaseID)
-				});
+				const item = state.items[action.payload.databaseID];
+
+				const section = state.sections[item.sectionID];
+
+				// Find the index in section.itemIDs of the ID of the item being deleted
+				const index = section.itemIDs.find(itemID => itemID === item.databaseID)
+				
+				// Remove the item from the section's itemIDs array
+				if (index !== undefined) section.itemIDs.splice(index)
+
+				// Delete all transactions that were made from this item
+				for (const transactionID of item.transactionIDs) {
+					delete state.transactions[transactionID];
+				}
+
+				// Delete the item itself
+				delete state.items[action.payload.databaseID];
+			},
+
+			addTransaction: (state, action: PayloadAction<{ itemDatabaseID: number, amount: number, dateString: string }>) => {
+				const dateFromString = new Date(action.payload.dateString);
+
+				// Sort the transaction groups by date, so that the most recent group is always at the start of the array
+				const sortedTransactionGroups = Object.values(state.transactionGroups).toSorted((a, b) => {
+					const dateA = new Date(a.dateString);
+					const dateB = new Date(b.dateString);
+
+					return dateB.getTime() - dateA.getTime(); // Sort in descending order
+				})
+
+				if (Object.entries(state.transactionGroups).length === 0) { // Then no transactions have ever occurred and we must make a new group
+					state.transactionGroups[state.idCounter] = {
+						databaseID: state.idCounter,
+						dateString: action.payload.dateString,
+						transactionIDs: [state.idCounter + 1],
+					};
+
+					state.transactions[state.idCounter + 1] = {
+						databaseID: state.idCounter + 1,
+						itemID: action.payload.itemDatabaseID,
+						amount: action.payload.amount,
+						dateString: action.payload.dateString,
+						transactionGroupID: state.idCounter
+					}
+
+					state.items[action.payload.itemDatabaseID].transactionIDs.push(state.idCounter + 1);
+
+					state.idCounter += 2;
+				} else if ((() => { 
+					const dateOfLastGroup = new Date(sortedTransactionGroups[0].dateString); // Date of the most recent transaction group
+
+					return dateOfLastGroup.getFullYear() !== dateFromString.getFullYear()
+					|| dateOfLastGroup.getMonth() !== dateFromString.getMonth()
+					|| dateOfLastGroup.getDate() !== dateFromString.getDate();
+				})()) { // If the most recent group's date and the given date have a different year, month, or day, then we must make a new group
+					state.transactionGroups[state.idCounter] = {
+						databaseID: state.idCounter,
+						dateString: action.payload.dateString,
+						transactionIDs: [state.idCounter + 1],
+					};
+
+					state.transactions[state.idCounter + 1] = {
+						databaseID: state.idCounter + 1,
+						itemID: action.payload.itemDatabaseID,
+						amount: action.payload.amount,
+						dateString: action.payload.dateString,
+						transactionGroupID: state.idCounter
+					}
+
+					state.items[action.payload.itemDatabaseID].transactionIDs.push(state.idCounter + 1);
+
+					state.idCounter += 2;
+				} else { // If we get here, the most recent transaction group fits the new transaction's date
+					state.transactionGroups[
+						sortedTransactionGroups[0].databaseID // ID of most recent transaction group
+					].transactionIDs.push(state.idCounter);
+
+					state.transactions[state.idCounter] = {
+						databaseID: state.idCounter,
+						itemID: action.payload.itemDatabaseID,
+						amount: action.payload.amount,
+						dateString: action.payload.dateString,
+						transactionGroupID: sortedTransactionGroups[0].databaseID
+					}
+
+					state.items[action.payload.itemDatabaseID].transactionIDs.push(state.idCounter);
+
+					state.idCounter++;
+				}
+			},
+
+			deleteTransaction: (state, action: PayloadAction<{ databaseID: number }>) => {
+				const transaction = state.transactions[action.payload.databaseID];
+
+				if (transaction === undefined) return; // No such transaction exists
+
+				// Remove the transaction from the item it belongs to
+				const item = state.items[transaction.itemID];
+				const index = item.transactionIDs.indexOf(transaction.databaseID);
+				if (index !== -1) {
+					item.transactionIDs.splice(index, 1);
+				}
+
+				// Remove the transaction from the transaction group it belongs to
+				const group = state.transactionGroups[transaction.transactionGroupID];
+				const groupIndex = group.transactionIDs.indexOf(transaction.databaseID);
+				if (groupIndex !== -1) {
+					group.transactionIDs.splice(groupIndex, 1);
+				}
+
+				console.log(`group.transactionIDs after deletion: ${group.transactionIDs}`)
+				console.log(`group.transactionIDs.length after deletion: ${group.transactionIDs.length}`)
+
+				// If the transaction group has no transactions left, delete it
+				if (group.transactionIDs.length === 0) {
+					delete state.transactionGroups[transaction.transactionGroupID];
+				}
+
+				// Delete the transaction itself
+				delete state.transactions[action.payload.databaseID];
 			}
 		}
 	});
@@ -160,4 +313,3 @@ function saveToLocalStorage(store: Store) {
 		}
 	}
 }
-

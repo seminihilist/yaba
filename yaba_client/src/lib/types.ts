@@ -20,6 +20,21 @@ export type BudgetItem = {
 	 * will carry over to the next.
 	 */
 	isCumulative: boolean;
+
+	/**
+	 * The ID of the section that contains this budget item.
+	 */
+	sectionID: number;
+
+	/**
+	 * An array containing the IDs of all transactions that have been made from this item.
+	 */
+	transactionIDs: Array<number>;
+}
+
+export interface ItemMap {
+	[index: number]: BudgetItem;
+	[index: string]: BudgetItem;
 }
 
 export type BudgetSection = {
@@ -29,17 +44,24 @@ export type BudgetSection = {
 	name: string;
 
 	/**
-	 * The ID of this budget section as stored in the database. This will be -1 if the budget section has not yet been
-	 * committed to the database.
+	 * The ID of this budget section as stored in the database.
 	 */
 	databaseID: number;
 
 	/**
-	 * The RGB color of this budget section in a 3-length array, as set by the user. 
+	 * The color of this budget section, as set by the user. Uses Tailwind's color class names. 
 	 */
-	color: Array<number>;
+	color: string;
 
-	items: Array<BudgetItem>;
+	/**
+	 * An array containing the IDs of all items in this section.
+	 */
+	itemIDs: Array<number>;
+}
+
+export interface SectionMap {
+	[index: number]: BudgetSection;
+	[index: string]: BudgetSection;
 }
 
 /**
@@ -47,21 +69,89 @@ export type BudgetSection = {
  */
 export type Transaction = {
 	/**
+	 * The ID of this transaction as stored in the database.
+	 */
+	databaseID: number;
+
+	/**
 	 * The database ID of the `BudgetItem` from which the money was spent.
 	 */
 	itemID: number;
 
 	/**
+	 * The ID of the `TransactionGroup` that this transaction belongs to.
+	 */
+	transactionGroupID: number;
+
+	/**
 	 * The amount of money that was spent.
 	 */
 	amount: number;
+
+	/**
+	 * The Date when this Transaction occured, as an ISO date string.
+	 */
+	dateString: string;
 }
 
-export type BudgetState = {
-	sections: Array<BudgetSection>;
+export interface TransactionMap {
+	[index: number]: Transaction;
+	[index: string]: Transaction;
+}
 
-	ownerUsername: string;
-	memberUsernames: Array<string>;
+export type TransactionGroup = {
+	/**
+	 * The ID of this transaction group as stored in the database.
+	 */
+	databaseID: number;
+
+	/**
+	 * The date of all transactions in this group, as an ISO date string. Only the year, month, and day are used or checked.
+	 */
+	dateString: string;
+
+	/**
+	 * An Array containing the IDs of all Transactions in this group.
+	 */
+	transactionIDs: Array<number>
+}
+
+export type TransactionGroupMap = {
+	[index: number]: TransactionGroup;
+	[index: string]: TransactionGroup;
+}
+
+
+export type BudgetState = {
+	/**
+	 * A mapping of section IDs to sections.
+	 */
+	sections: SectionMap;
+
+	/**
+	 * A mapping of item IDs to items.
+	 */
+	items: ItemMap;
+
+	/**
+	 * A mapping of transaction IDs to transactions.
+	 */
+	transactions: TransactionMap;
+
+	/**
+	 * A mapping of transaction IDs to transactions.
+	 */
+	transactionGroups: TransactionGroupMap;
+
+	/**
+	 * The next ID that will be assigned. Will be removed once I finally add a server and database.
+	 */
+	idCounter: number;
+
+	/**
+	 * The amount of money that is currently available to put in envelopes.
+	 */
+	availableMoney: number;
 }
 
 export type AppState = {
