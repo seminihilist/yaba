@@ -24,8 +24,14 @@ export const makeStore = () => {
 			}},
 			transactions: {},
 			transactionGroups: {},
-			idCounter: 2,
-			availableMoney: 0
+			idCounter: 3,
+			incomeItems: {
+				2: {
+					name: "Salary",
+					databaseID: 2,
+					amount: 3000
+				}
+			}
 		}
 
 		if (typeof window === "undefined") {
@@ -235,6 +241,25 @@ export const makeStore = () => {
 
 				// Delete the transaction itself
 				delete state.transactions[action.payload.databaseID];
+			},
+
+			addIncomeItem: (state, action: PayloadAction<{ name: string, amount: number }>) => {
+				state.incomeItems[state.idCounter] = {
+					name: action.payload.name,
+					databaseID: state.idCounter,
+					amount: action.payload.amount
+				};
+
+				state.idCounter++;
+			},
+
+			alterIncomeItem: (state, action: PayloadAction<{ databaseID: number, name: string, amount: number }>) => {
+				state.incomeItems[action.payload.databaseID].name = action.payload.name;
+				state.incomeItems[action.payload.databaseID].amount = action.payload.amount;
+			},
+
+			deleteIncomeItem: (state, action: PayloadAction<{ databaseID: number }>) => {
+				delete state.incomeItems[action.payload.databaseID];
 			}
 		}
 	});

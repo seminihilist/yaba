@@ -1,56 +1,30 @@
-'use client';
-
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, TextField, IconButton, TableRow, TableCell } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { bgColor } from "@/lib/color_utils";
-import type { BudgetSection, BudgetItem } from "@/lib/types";
-import { Add, Delete, Edit } from "@mui/icons-material";
+import { useAppDispatch } from "@/app/hooks";
+import { IncomeItem } from "@/lib/types";
+import { Edit, Delete } from "@mui/icons-material";
+import { TableRow, TableCell, IconButton, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { RootState } from "@/lib/store";
 
-/* Display an item in a Budget Section. 
- */
-export default function BudgetSectionComponent({ item, color, index }: Readonly<{ item: BudgetItem, color: string, index: number }>) {
-	const router = useRouter();
+export default function IncomeItemComponent({ item, index }: Readonly<{ item: IncomeItem, index: number }>) {
+	const [editDialogIsOpen, setEditDialogIsOpen] = useState(false);
+	const [deleteDialogIsOpen, setDeleteDialogIsOpen] = useState(false);
 
-	const dispatch = useAppDispatch()
-
-	const [editDialogIsOpen, setEditDialogIsOpen] = useState(false)
-	const [deleteDialogIsOpen, setDeleteDialogIsOpen] = useState(false)
-
-	const transactions = useAppSelector((state: RootState) => state.budget.transactions); 
-	const myTransactions = Object.values(transactions).filter((transaction) => transaction.itemID === item.databaseID);
-	const totalSpent = myTransactions.reduce((acc, transaction) => acc + transaction.amount, 0);
-	const amountRemaining = item.amount - totalSpent;
+	const dispatch = useAppDispatch();
 
 	return (
 		<>
 			<TableRow 
-				className={`${ index % 2 === 0 ? bgColor(color, 50) : bgColor(color, 100)} text-black`}
-				id={`item-${item.databaseID}`}
+				className={`${ index % 2 === 0 ? "bg-slate-200" : "bg-slate-300"} text-black`}
+				id={`income-item-${index}`}
 			>
 				<TableCell className="p-2">{item.name}</TableCell>
 				<TableCell className="p-2 text-center">${item.amount}</TableCell>
-				<TableCell className="p-2 text-center">-${totalSpent}</TableCell>
-				<TableCell className="p-2 text-center">${amountRemaining}</TableCell>
 				<TableCell className="p-2 text-center">
 					<IconButton title="Edit" onClick={(e) => setEditDialogIsOpen(true)}><Edit /></IconButton>
-					<Link
-					href={{
-						pathname: "./transactions",
-						query: {
-							"create_transaction": 1,
-							"itemid": item.databaseID 
-						}
-					}}
-					>
-						<IconButton title="Add Transaction"><Add /></IconButton>
-					</Link>
 					<IconButton title="Delete" onClick={(e) => setDeleteDialogIsOpen(true)}><Delete /></IconButton>
 				</TableCell>
 			</TableRow>
+
+			{/* Edit Dialog */}
 			<Dialog 
 				open={editDialogIsOpen}
 				onClose={() => setEditDialogIsOpen(false)}
@@ -62,15 +36,15 @@ export default function BudgetSectionComponent({ item, color, index }: Readonly<
 
 							const formData = new FormData(event.currentTarget);
 							const formJson = Object.fromEntries((formData as any).entries());
-							const itemName: string = formJson.itemName;
-							const amount: number = formJson.amount;
+							const newName = formJson.newName;
+							const newAmount = formJson.newAmount;
 
 							dispatch({
-								"type": "budget/alterItem",
-								"payload": { 
-									databaseID: item.databaseID, 
-									newName: itemName, 
-									newAmount: amount 
+								"type": "budget/alterIncomeItem",
+								"payload": {
+									"name": newName,
+									"amount": newAmount,
+									"databaseID": item.databaseID
 								}
 							});
 
@@ -88,9 +62,9 @@ export default function BudgetSectionComponent({ item, color, index }: Readonly<
 						autoFocus
 						required
 						margin="dense"
-						id="name"
-						name="itemName"
-						label="Item Name"
+						id="newName"
+						name="newName"
+						label="New Name"
 						type="text"
 						fullWidth
 						variant="standard"
@@ -100,9 +74,9 @@ export default function BudgetSectionComponent({ item, color, index }: Readonly<
 						autoFocus
 						required
 						margin="dense"
-						id="name"
-						name="amount"
-						label="Amount"
+						id="newAmount"
+						name="newAmount"
+						label="New Amount"
 						type="number"
 						fullWidth
 						variant="standard"
@@ -119,6 +93,8 @@ export default function BudgetSectionComponent({ item, color, index }: Readonly<
 					<Button type="submit">Edit</Button>
 				</DialogActions>
 			</Dialog>
+
+			{/* Delete Dialog */}
 			<Dialog 
 				open={deleteDialogIsOpen}
 				onClose={() => setDeleteDialogIsOpen(false)}
@@ -129,7 +105,7 @@ export default function BudgetSectionComponent({ item, color, index }: Readonly<
 							event.preventDefault()
 
 							dispatch({
-								"type": "budget/deleteItem",
+								"type": "budget/deleteIncomeItem",
 								"payload": { 
 									databaseID: item.databaseID
 								}
@@ -148,9 +124,9 @@ export default function BudgetSectionComponent({ item, color, index }: Readonly<
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={() => setDeleteDialogIsOpen(false)}>Cancel</Button>
-					<Button type="submit">Delete</Button>
+					<Button type="submit" className="text-red-500">Delete</Button>
 				</DialogActions>
 			</Dialog>
 		</>
-	)
+	);
 }

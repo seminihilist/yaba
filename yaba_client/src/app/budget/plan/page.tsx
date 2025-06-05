@@ -10,8 +10,11 @@ import BottomRightPlusButtonComponent from "../components/BottomRightPlusButtonC
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, TextField, IconButton } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { colors } from "@/lib/color_utils";
+import IncomeSectionComponent from "./components/IncomeSectionComponent";
 
 export default function PlanPage() {
+	const sectionsAndIDs = Object.entries(useAppSelector((state: RootState) => state.budget.sections));
+
 	const openDialogName: string = useAppSelector((state: RootState) => state.app.openDialog);
 
 	const dispatch = useAppDispatch();
@@ -20,8 +23,9 @@ export default function PlanPage() {
 
 	return (
 		<>
-			<main>
-				<BudgetSectionListComponent />
+			<main className="p-2">
+				<IncomeSectionComponent />
+				{sectionsAndIDs.map(([id, section], index) => (<BudgetSectionComponent section={section} key={index} />))}
 				<BottomRightPlusButtonComponent onClick={(e) => openDialog("newBudgetSection")} />
 			</main>
 			<Dialog 

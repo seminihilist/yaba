@@ -47,7 +47,9 @@ export default function BudgetSectionComponent({ section }: Readonly<{ section: 
 									<TableHead>
 										<TableRow className={`p-1.5 ${bgColor(section.color, 200)}`}>
 											<TableCell className="font-bold p-1.5 w-auto">Name</TableCell>
-											<TableCell className="font-bold p-1.5 w-10 text-center">Amount</TableCell>
+											<TableCell className="font-bold p-1.5 w-[100px] text-center">Planned</TableCell>
+											<TableCell className="font-bold p-1.5 w-[100px] text-center">Spent</TableCell>
+											<TableCell className="font-bold p-1.5 w-[100px] text-center">Remaining</TableCell>
 											<TableCell className="font-bold p-1.5 w-[160px] text-center">Actions</TableCell>
 										</TableRow>
 									</TableHead>

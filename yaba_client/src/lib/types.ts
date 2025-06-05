@@ -37,6 +37,28 @@ export interface ItemMap {
 	[index: string]: BudgetItem;
 }
 
+export type IncomeItem = {
+	/**
+	 * The name of this income item, as set by the user.
+	 */
+	name: string;
+
+	/**
+	 * The ID of this income item as stored in the database.
+	 */
+	databaseID: number;
+
+	/**
+	 * The amount of money that this income item provides.
+	 */
+	amount: number;
+}
+
+export interface IncomeItemMap {
+	[index: number]: IncomeItem;
+	[index: string]: IncomeItem;
+}
+
 export type BudgetSection = {
 	/**
 	 * The name of this budget section, as set by the user.
@@ -149,9 +171,9 @@ export type BudgetState = {
 	idCounter: number;
 
 	/**
-	 * The amount of money that is currently available to put in envelopes.
+	 * An array of all income items in the budget.
 	 */
-	availableMoney: number;
+	incomeItems: IncomeItemMap;
 }
 
 export type AppState = {
