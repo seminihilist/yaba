@@ -6,10 +6,12 @@ import Link from "next/link"
 
 function ListItemLink({ icon, primary, href }: Readonly<{ icon: React.ReactNode, primary: string, href: string }>) {
 	return (
-		<ListItemButton component={Link} href={href}>
-			{icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-			<ListItemText primary={primary} />
-		</ListItemButton>
+        <Link href={href}>
+            <ListItemButton>
+                {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
+                <ListItemText primary={primary} />
+            </ListItemButton>
+        </Link>
 	);
 }
 
@@ -84,7 +86,71 @@ function DesktopNavigationContainer({ children }: Readonly<{ children: React.Rea
 }
 
 export default function NavigationContainer({ isMobile, children }: Readonly<{ isMobile: boolean, children: React.ReactNode }>) {
-	if (typeof window === "undefined") {
+    return (
+        <>
+            <div
+                className={
+                    "max-md:flex max-md:flex-col max-md:h-screen max-md:overflow-clip max-md:fixed max-md:top-0 " +
+                    "max-md:left-0 max-md:right-0 max-md:bottom-0 " +
+
+                    "min-md:h-screen min-md:flex min-md:flex-row"
+                }
+            >
+                <Paper elevation={10} className="flex-none min-md:hidden">
+                    <BottomNavigation className="p-2">
+                        <Link href="./home">
+                            <BottomNavigationAction label="Home" icon={<House />} showLabel={true} />
+                        </Link>
+                        <Link href="./plan">
+                            <BottomNavigationAction label="Budget" icon={<ViewList />} showLabel={true} />
+                        </Link>
+                        <Link href="./transactions">
+                            <BottomNavigationAction label="Transactions" icon={<Payments />} showLabel={true} />
+                        </Link>
+                        <Link href="./settings">
+                            <BottomNavigationAction label="Settings" icon={<Settings />} showLabel={true} />
+                        </Link>
+                    </BottomNavigation>
+                </Paper>
+                <Drawer
+                    variant="permanent"
+                    className="flex-none max-md:hidden"
+                    sx={{
+                        position: "relative",
+                        width: 240,
+                        '& .MuiDrawer-paper': {
+                            width: 240,
+                            boxSizing: 'border-box'
+                        },
+                    }}
+                >
+                    <List>
+                        <ListItem>
+                            <ListItemLink icon={<House />} primary="Home" href="./home" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemLink icon={<ViewList />} primary="Budget" href="./plan" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemLink icon={<Payments />} primary="Transactions" href="./transactions" />
+                        </ListItem>
+                    </List>
+                    <Divider />
+                    <List>
+                        <ListItem>
+                            <ListItemLink icon={<Settings />} primary="Settings" href="./settings" />
+                        </ListItem>
+                    </List>
+                </Drawer>
+                <div className="overflow-x-clip overflow-y-scroll flex-1 bg-amber-100">
+                    {children}
+                </div>
+            </div>
+        </>
+    )
+
+    /*
+    if (typeof window === "undefined") {
 		// If we are on the server, return both as one will be hidden by CSS
 		return (
 			<>
@@ -141,4 +207,5 @@ export default function NavigationContainer({ isMobile, children }: Readonly<{ i
 			</div>
 		)
 	}
+	*/
 }

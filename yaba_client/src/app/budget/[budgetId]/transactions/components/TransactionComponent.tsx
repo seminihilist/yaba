@@ -20,23 +20,34 @@ export default function TransactionComponent({ transaction }: Readonly<{ transac
 		minute: "2-digit"
 	})
 
-	const idToItemMap = useAppSelector((state: RootState) => state.budget.items)
-	const idToSectionMap = useAppSelector((state: RootState) => state.budget.sections)
+	const idToItemMap = useAppSelector((state: RootState) => state.items)
+	const idToSectionMap = useAppSelector((state: RootState) => state.sections)
 
 	const item = idToItemMap[transaction.itemID]
-	const section = idToSectionMap[item !== undefined ? item.sectionID : 0]
+
+    if (item === undefined) {
+        console.error(`transaction #${transaction.id} is attached to non-existent item #${transaction.itemID}`);
+        return <></>;
+    }
+
+	const section = idToSectionMap[item.sectionID]
+
+    if (section === undefined) {
+        console.error(`item #${item.id} is attached to non-existent section #${item.sectionID}`);
+        return <></>;
+    }
 
 	return (
 		<>
-			<TableRow className={bgColor(section !== undefined ? section.color : "white", 50)}>
-				<TableCell>{idToItemMap[transaction.itemID]?.name} <i>({idToSectionMap[item !== undefined ? item.sectionID : 0]?.name})</i></TableCell>
+			<TableRow className={bgColor(section.color, 50)}>
+				<TableCell>{item.name} <i>({section.name})</i></TableCell>
 				<TableCell className="w-30 text-center">${transaction.amount}</TableCell>
 				<TableCell className="w-25 text-center">{timeFormatter.format(new Date(transaction.dateString))}</TableCell>
 				<TableCell className="w-20 text-center">
 					<IconButton onClick={() => setDeleteDialogIsOpen(true)}><Delete /></IconButton>
 				</TableCell> 
 			</TableRow>
-				<Dialog 
+			<Dialog
 				open={deleteDialogIsOpen}
 				onClose={() => setDeleteDialogIsOpen(false)}
 				slotProps={{
@@ -48,7 +59,7 @@ export default function TransactionComponent({ transaction }: Readonly<{ transac
 							dispatch({
 								"type": "budget/deleteTransaction",
 								"payload": { 
-									databaseID: transaction.databaseID
+									id: transaction.id
 								}
 							});
 
