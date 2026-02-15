@@ -32,20 +32,20 @@ export default function BudgetLayout({ children }: Readonly<{ children: React.Re
 		}
 	})
 
-	const content = typeof window === "undefined" ?
-		// If we are on the server, return a loading screen
-		<CenterCircleLoader /> :
-		// If we are on the client, return a Suspense
-		<Suspense fallback={<CenterCircleLoader />}>
-			{children}
-		</Suspense>
+	//const content = typeof window === "undefined" ?
+	//	// If we are on the server, return a loading screen
+	//	<CenterCircleLoader /> :
+	//	// If we are on the client, return a Suspense
+	//	<Suspense fallback={<CenterCircleLoader />}>
+	//		{children}
+	//	</Suspense>
 
 
 	return (
 		<StoreProvider>
 			<NavigationContainer isMobile={isMobile}>
 				<div className="bg-amber-100 text-black w-full h-full p-2">
-					{content}
+					{children}
 				</div>
 			</NavigationContainer>
 		</StoreProvider>

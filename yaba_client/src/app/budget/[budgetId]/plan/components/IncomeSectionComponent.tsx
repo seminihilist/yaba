@@ -4,12 +4,15 @@ import IncomeItemComponent from "./IncomeItemComponent";
 import { Edit, Palette, Delete, Add } from "@mui/icons-material";
 import { Card, CardHeader, IconButton, Table, TableHead, TableRow, TableCell, TableBody, CardActions, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import { useState } from "react";
+import { Budget } from "@/lib/types";
 
-export default function IncomeSectionComponent() {
+export default function IncomeSectionComponent({ budget }: Readonly<{ budget: Budget }>) {
 	const [newItemDialogIsOpen, setNewItemDialogIsOpen] = useState(false);
 	const dispatch = useAppDispatch();
 
-	const incomeItems = useAppSelector((state: RootState) => state.budget.incomeItems);
+	const incomeItems = useAppSelector(
+        (state) => budget.incomeItems.map((id) => state.incomeItems[id])
+    ).filter((incomeItem) => !!incomeItem);
 
 	return (
 		<>
@@ -30,7 +33,7 @@ export default function IncomeSectionComponent() {
 										</TableRow>
 									</TableHead>
 									<TableBody>
-										{Object.values(incomeItems).map((item, index) => { console.log(item); return (<IncomeItemComponent item={item} index={index} key={item.databaseID} />) })}
+										{Object.values(incomeItems).map((item, index) => { console.log(item); return (<IncomeItemComponent item={item} index={index} key={item.id} />) })}
 									</TableBody>
 								</>
 								: <TableHead>
@@ -69,7 +72,7 @@ export default function IncomeSectionComponent() {
 							const amount: number = formJson.amount;
 
 							dispatch({
-								"type": "budget/addIncomeItem",
+								"type": "app/addIncomeItem",
 								"payload": { 
 									name: itemName, 
 									amount: amount, 

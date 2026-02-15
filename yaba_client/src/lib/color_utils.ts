@@ -1,21 +1,37 @@
 // Welcome to pain, please enjoy your stay
+// Surely there's a better way to do this
 
-export const colors: Array<string> = [
-	"red", "orange", "amber", "yellow", "lime",
-	"green", "emerald", "teal", "cyan", "sky",
-	"blue", "indigo", "violet", "purple", "fuchsia",
-	"pink", "rose",
+/**
+ * A TailwindCSS color.
+ */
+export type Color = "red" | "orange" | "amber" | "yellow" | "lime" | "green" | "emerald" | "teal" | "cyan" | "sky" |
+    "blue" | "indigo" | "violet" | "purple" | "fuchsia" | "pink" | "rose" | "slate" | "gray" | "zinc" | "neutral" |
+    "stone"
 
-	"slate", "gray", "zinc", "neutral", "stone"
+/**
+ * A magnitude of a TailwindCSS color.
+ */
+export type Magnitude = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+
+/**
+ * All the colors TailwindCSS supports.
+ */
+export const COLORS: Array<Color> = [
+    "red", "orange", "amber", "yellow", "lime",
+    "green", "emerald", "teal", "cyan", "sky",
+    "blue", "indigo", "violet", "purple", "fuchsia",
+    "pink", "rose",
+
+    "slate", "gray", "zinc", "neutral", "stone"
 ]
 
 /**
- * Returns the TailwindCSS class.
- * @param color 
- * @param value 
+ * Returns the TailwindCSS class for a given color and magnitude.
+ * @param color The color to determine the class for.
+ * @param magnitude The numerical magnitude of the color.
  */
-export function bgColor(color: string, value: number) {
-	switch (value) {
+export function bgColor(color: Color, magnitude: Magnitude) {
+	switch (magnitude) {
 		case 50: return bgColor50(color);
 		case 100: return bgColor100(color);
 		case 200: return bgColor200(color);
@@ -31,7 +47,7 @@ export function bgColor(color: string, value: number) {
 	}
 }
 
-function bgColor50(color: string) {
+function bgColor50(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-50"
@@ -82,7 +98,7 @@ function bgColor50(color: string) {
 	}
 }
 
-function bgColor100(color: string) {
+function bgColor100(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-100"
@@ -133,7 +149,7 @@ function bgColor100(color: string) {
 	}
 }
 
-function bgColor200(color: string) {
+function bgColor200(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-200"
@@ -184,7 +200,7 @@ function bgColor200(color: string) {
 	}
 }
 
-function bgColor300(color: string) {
+function bgColor300(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-300"
@@ -235,7 +251,7 @@ function bgColor300(color: string) {
 	}
 }
 
-function bgColor400(color: string) {
+function bgColor400(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-400"
@@ -286,7 +302,7 @@ function bgColor400(color: string) {
 	}
 }
 
-function bgColor500(color: string) {
+function bgColor500(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-500"
@@ -337,7 +353,7 @@ function bgColor500(color: string) {
 	}
 }
 
-function bgColor600(color: string) {
+function bgColor600(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-600"
@@ -388,7 +404,7 @@ function bgColor600(color: string) {
 	}
 }
 
-function bgColor700(color: string) {
+function bgColor700(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-700"
@@ -439,7 +455,7 @@ function bgColor700(color: string) {
 	}
 }
 
-function bgColor800(color: string) {
+function bgColor800(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-800"
@@ -490,7 +506,7 @@ function bgColor800(color: string) {
 	}
 }
 
-function bgColor900(color: string) {
+function bgColor900(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-900"
@@ -541,7 +557,7 @@ function bgColor900(color: string) {
 	}
 }
 
-function bgColor950(color: string) {
+function bgColor950(color: Color) {
 	switch (color) {
 		case "red":
 			return "bg-red-950"
@@ -595,10 +611,10 @@ function bgColor950(color: string) {
 /**
  * Returns the TailwindCSS class.
  * @param color 
- * @param value 
+ * @param magnitude 
  */
-export function textColor(color: string, value: number) {
-	switch (value) {
+export function textColor(color: Color, magnitude: Magnitude) {
+	switch (magnitude) {
 		case 50: return textColor50(color);
 		case 100: return textColor100(color);
 		case 200: return textColor200(color);
@@ -614,7 +630,7 @@ export function textColor(color: string, value: number) {
 	}
 }
 
-function textColor50(color: string) {
+function textColor50(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-50"
@@ -665,7 +681,7 @@ function textColor50(color: string) {
 	}
 }
 
-function textColor100(color: string) {
+function textColor100(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-100"
@@ -716,7 +732,7 @@ function textColor100(color: string) {
 	}
 }
 
-function textColor200(color: string) {
+function textColor200(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-200"
@@ -767,7 +783,7 @@ function textColor200(color: string) {
 	}
 }
 
-function textColor300(color: string) {
+function textColor300(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-300"
@@ -818,7 +834,7 @@ function textColor300(color: string) {
 	}
 }
 
-function textColor400(color: string) {
+function textColor400(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-400"
@@ -869,7 +885,7 @@ function textColor400(color: string) {
 	}
 }
 
-function textColor500(color: string) {
+function textColor500(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-500"
@@ -920,7 +936,7 @@ function textColor500(color: string) {
 	}
 }
 
-function textColor600(color: string) {
+function textColor600(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-600"
@@ -971,7 +987,7 @@ function textColor600(color: string) {
 	}
 }
 
-function textColor700(color: string) {
+function textColor700(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-700"
@@ -1022,7 +1038,7 @@ function textColor700(color: string) {
 	}
 }
 
-function textColor800(color: string) {
+function textColor800(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-800"
@@ -1073,7 +1089,7 @@ function textColor800(color: string) {
 	}
 }
 
-function textColor900(color: string) {
+function textColor900(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-900"
@@ -1124,7 +1140,7 @@ function textColor900(color: string) {
 	}
 }
 
-function textColor950(color: string) {
+function textColor950(color: Color) {
 	switch (color) {
 		case "red":
 			return "text-red-950"

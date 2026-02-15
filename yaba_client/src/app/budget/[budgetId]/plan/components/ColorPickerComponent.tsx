@@ -1,4 +1,4 @@
-import { textColor, bgColor, colors } from "@/lib/color_utils";
+import { textColor, bgColor, COLORS } from "@/lib/color_utils";
 import { Check } from "@mui/icons-material";
 import { Grid, Radio, RadioGroup } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -19,7 +19,7 @@ export default function ColorPicker({ defaultColor }: Readonly<{ defaultColor: s
 		>
 			<Grid container spacing={1.5} columns={8}>
 				{
-					colors.map((color, index) => (
+					COLORS.map((color, index) => (
 						<Grid size={1} key={color}>
 							<Radio
 								checkedIcon={<Check htmlColor="#222" />}

@@ -1,34 +1,35 @@
 'use client';
 
-import type { BudgetSection } from "@/lib/types";
+import type {AppState, Budget, Section} from "@/lib/types";
 import BudgetItemComponent from "./BudgetItemComponent";
 
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, TextField, IconButton, Table, TableHead, TableRow, TableCell, TableBody, RadioGroup, Radio, Grid, Card, CardHeader, CardActions } from "@mui/material";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { bgColor, colors, textColor } from "@/lib/color_utils";
+import { bgColor, COLORS, textColor } from "@/lib/color_utils";
 
 import { Add, Check, Delete, Edit, Palette } from "@mui/icons-material"
 import { RootState } from "@/lib/store";
 import ColorPicker from "./ColorPickerComponent";
+import {createSelector} from "reselect";
 
 /* A section of the budget.
  */
-export default function BudgetSectionComponent({ section }: Readonly<{ section: BudgetSection }>) {
-	const [renameDialogIsOpen, setRenameDialogIsOpen] = useState(false);
+export default function BudgetSectionComponent({ budget, section }: Readonly<{ budget: Budget, section: Section }>) {
+    const [renameDialogIsOpen, setRenameDialogIsOpen] = useState(false);
 	const [recolorDialogIsOpen, setRecolorDialogIsOpen] = useState(false);
 	const [deleteDialogIsOpen, setDeleteDialogIsOpen] = useState(false);
 	const [newItemDialogIsOpen, setNewItemDialogIsOpen] = useState(false);
 
-	const idToItemMap = useAppSelector((state: RootState) => state.budget.items);
-
-	const itemsAndIDs = Object.entries(idToItemMap).filter(([id, item]) => item !== undefined && item.sectionID === section.databaseID);
+	const items = useAppSelector(
+        (state) => section.itemIDs.map((id) => state.items[id])
+    ).filter((item) => !!item);
 
 	const dispatch = useAppDispatch();
 
 	return (
 		<>
-			<Card elevation={1} className={`rounded-s mb-2 p-1.5 ${bgColor(section.color, 500)}`} id={`section-${section.databaseID}`}>
+			<Card elevation={1} className={`rounded-s mb-2 p-1.5 ${bgColor(section.color, 500)}`} id={`section-${section.id}`}>
 				<CardHeader
 				action={
 					<>
@@ -54,7 +55,7 @@ export default function BudgetSectionComponent({ section }: Readonly<{ section: 
 										</TableRow>
 									</TableHead>
 									<TableBody>
-										{itemsAndIDs.map(([id, item], index) => { console.log(item); return (<BudgetItemComponent item={item} color={section.color} index={index} key={index} />) })}
+										{[...items.map((item, index) => { console.log(item); return (<BudgetItemComponent budget={budget} item={item} color={section.color} index={index} key={index} />) })]}
 									</TableBody>
 								</>
 								: <TableHead>
@@ -93,10 +94,10 @@ export default function BudgetSectionComponent({ section }: Readonly<{ section: 
 							console.log(sectionName);
 
 							dispatch({
-								"type": "budget/renameSection",
+								"type": "app/renameSection",
 								"payload": {
-									"newName": sectionName,
-									"databaseID": section.databaseID
+									newName: sectionName,
+									id: section.id
 								}
 							});
 
@@ -141,10 +142,10 @@ export default function BudgetSectionComponent({ section }: Readonly<{ section: 
 							const newColor = formJson.newColor;
 
 							dispatch({
-								"type": "budget/recolorSection",
+								"type": "app/recolorSection",
 								"payload": {
-									"newColor": newColor,
-									"databaseID": section.databaseID
+									newColor: newColor,
+									id: section.id
 								}
 							});
 
@@ -177,9 +178,9 @@ export default function BudgetSectionComponent({ section }: Readonly<{ section: 
 							const formData = new FormData(event.currentTarget);
 
 							dispatch({
-								"type": "budget/deleteSection",
+								"type": "app/deleteSection",
 								"payload": {
-									"databaseID": section.databaseID
+									id: section.id
 								}
 							});
 
@@ -214,9 +215,9 @@ export default function BudgetSectionComponent({ section }: Readonly<{ section: 
 							const amount: number = formJson.amount;
 
 							dispatch({
-								"type": "budget/addItem",
+								"type": "app/addItem",
 								"payload": { 
-									sectionDatabaseID: section.databaseID, 
+									sectionID: section.id,
 									itemName: itemName, 
 									itemAmount: amount, 
 									itemIsCumulative: false 

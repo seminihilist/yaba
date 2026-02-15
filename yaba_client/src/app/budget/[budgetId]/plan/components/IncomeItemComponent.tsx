@@ -40,11 +40,11 @@ export default function IncomeItemComponent({ item, index }: Readonly<{ item: In
 							const newAmount = formJson.newAmount;
 
 							dispatch({
-								"type": "budget/alterIncomeItem",
+								"type": "app/alterIncomeItem",
 								"payload": {
-									"name": newName,
-									"amount": newAmount,
-									"databaseID": item.databaseID
+									name: newName,
+									amount: newAmount,
+									id: item.id
 								}
 							});
 
@@ -105,9 +105,9 @@ export default function IncomeItemComponent({ item, index }: Readonly<{ item: In
 							event.preventDefault()
 
 							dispatch({
-								"type": "budget/deleteIncomeItem",
+								"type": "app/deleteIncomeItem",
 								"payload": { 
-									databaseID: item.databaseID
+									id: item.id
 								}
 							});
 

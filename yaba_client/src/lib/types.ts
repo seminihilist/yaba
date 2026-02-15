@@ -1,4 +1,7 @@
-export type BudgetItem = {
+import { Color } from "./color_utils";
+import { Map } from "immutable";
+
+export type Item = {
 	/**
 	 * The name of this budget item, as set by the user.
 	 */
@@ -8,7 +11,7 @@ export type BudgetItem = {
 	 * The ID of this budget item as stored in the database. This will be -1 if the budget item has not yet been
 	 * committed to the database.
 	 */
-	databaseID: number;
+	id: number;
 
 	/**
 	 * The amount of money planned for this budget item. Does not account for any transactions out of this item.
@@ -32,21 +35,21 @@ export type BudgetItem = {
 	transactionIDs: Array<number>;
 }
 
-export interface ItemMap {
-	[index: number]: BudgetItem;
-	[index: string]: BudgetItem;
-}
-
 export type IncomeItem = {
+    /**
+     * The ID of this income item as stored in the database.
+     */
+    id: number;
+
+    /**
+     * The ID of the budget that contains this item.
+     */
+    budgetID: number;
+
 	/**
 	 * The name of this income item, as set by the user.
 	 */
 	name: string;
-
-	/**
-	 * The ID of this income item as stored in the database.
-	 */
-	databaseID: number;
 
 	/**
 	 * The amount of money that this income item provides.
@@ -54,36 +57,31 @@ export type IncomeItem = {
 	amount: number;
 }
 
-export interface IncomeItemMap {
-	[index: number]: IncomeItem;
-	[index: string]: IncomeItem;
-}
+export type Section = {
+    /**
+     * The ID of this budget section as stored in the database.
+     */
+    id: number;
 
-export type BudgetSection = {
+    /**
+     * The ID of the budget that contains this section.
+     */
+    budgetID: number;
+
 	/**
 	 * The name of this budget section, as set by the user.
 	 */
 	name: string;
 
 	/**
-	 * The ID of this budget section as stored in the database.
-	 */
-	databaseID: number;
-
-	/**
 	 * The color of this budget section, as set by the user. Uses Tailwind's color class names. 
 	 */
-	color: string;
+	color: Color;
 
 	/**
 	 * An array containing the IDs of all items in this section.
 	 */
 	itemIDs: Array<number>;
-}
-
-export interface SectionMap {
-	[index: number]: BudgetSection;
-	[index: string]: BudgetSection;
 }
 
 /**
@@ -93,7 +91,7 @@ export type Transaction = {
 	/**
 	 * The ID of this transaction as stored in the database.
 	 */
-	databaseID: number;
+	id: number;
 
 	/**
 	 * The database ID of the `BudgetItem` from which the money was spent.
@@ -101,84 +99,78 @@ export type Transaction = {
 	itemID: number;
 
 	/**
-	 * The ID of the `TransactionGroup` that this transaction belongs to.
-	 */
-	transactionGroupID: number;
-
-	/**
 	 * The amount of money that was spent.
 	 */
 	amount: number;
 
 	/**
-	 * The Date when this Transaction occured, as an ISO date string.
+	 * The Date when this Transaction occurred, as an ISO date string.
 	 */
 	dateString: string;
 }
 
-export interface TransactionMap {
-	[index: number]: Transaction;
-	[index: string]: Transaction;
+/**
+ * A budget for a budgeting period.
+ */
+export type Budget = {
+    /**
+     * The ID of this Budget in the database.
+     */
+    id: number;
+
+    /**
+     * The array of IDs of income items in this budget.
+     */
+    incomeItems: Array<number>;
+
+    /**
+     * The array of IDs of the sections of this budget.
+     */
+    sections: Array<number>;
 }
 
-export type TransactionGroup = {
-	/**
-	 * The ID of this transaction group as stored in the database.
-	 */
-	databaseID: number;
+/**
+ * The section of the state that contains a mapping of date strings to their budgets.
+ */
+export type AppState = {
+    /**
+     * A mapping of budget IDs to budgets.
+     */
+	budgets: {
+        [index: number | string]: Budget | undefined;
+    };
+
+    /**
+     * A mapping of section IDs to sections.
+     */
+    sections: {
+        [index: number | string]: Section | undefined;
+    };
+
+    /**
+     * A mapping of item IDs to items.
+     */
+    items: {
+        [index: number | string]: Item | undefined;
+    }
+
+    /**
+     * A mapping of transaction IDs to transactions.
+     */
+    transactions: {
+        [index: number | string]: Transaction | undefined;
+    }
+
+    /**
+     * A mapping of income item IDs to income items.
+     */
+    incomeItems: {
+        [index: number | string]: IncomeItem | undefined;
+    }
 
 	/**
-	 * The date of all transactions in this group, as an ISO date string. Only the year, month, and day are used or checked.
-	 */
-	dateString: string;
-
-	/**
-	 * An Array containing the IDs of all Transactions in this group.
-	 */
-	transactionIDs: Array<number>
-}
-
-export type TransactionGroupMap = {
-	[index: number]: TransactionGroup;
-	[index: string]: TransactionGroup;
-}
-
-
-export type BudgetState = {
-	/**
-	 * A mapping of section IDs to sections.
-	 */
-	sections: SectionMap;
-
-	/**
-	 * A mapping of item IDs to items.
-	 */
-	items: ItemMap;
-
-	/**
-	 * A mapping of transaction IDs to transactions.
-	 */
-	transactions: TransactionMap;
-
-	/**
-	 * A mapping of transaction IDs to transactions.
-	 */
-	transactionGroups: TransactionGroupMap;
-
-	/**
-	 * The next ID that will be assigned. Will be removed once I finally add a server and database.
+	 * Used to generate new IDs for budgets, sections, items, transactions, and transaction groups.
+	 * This will be removed once I finally add a server and database.
 	 */
 	idCounter: number;
-
-	/**
-	 * An array of all income items in the budget.
-	 */
-	incomeItems: IncomeItemMap;
-}
-
-export type AppState = {
-	/**
-	 * The name of the currently open dialog box. This will be an empty string if there is no open dialog box.
-	 */
-	openDialog: string;
 }
