@@ -2,27 +2,22 @@
 'use client';
 
 import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Button,
-    TextField,
     IconButton,
     TableRow,
-    TableCell, ButtonBase, Typography
+    TableCell,
+    Typography
 } from "@mui/material";
-import {useAppDispatch, useAppSelector} from "@/lib/hooks";
-import type {Section, Item, Budget, AppState} from "@/domain/types";
-import {Add, Delete, DragIndicator, Edit, Payment, Payments, Savings} from "@mui/icons-material";
-import React, {useState} from "react";
+import {useAppSelector} from "@/lib/hooks";
+import type {Item} from "@/domain/types";
+import {Edit, Payments} from "@mui/icons-material";
+import React from "react";
+import { CURRENCY_FORMAT } from "@/lib/formatters";
 
 /* Display an item in a Budget Section. 
  */
 export default function BudgetItemComponent({
                                                 item,
-                                                isOpenInOverview,
+                                                //isOpenInOverview,
                                                 openInOverview,
                                             }: Readonly<{
     item: Item;
@@ -33,9 +28,7 @@ export default function BudgetItemComponent({
         (state) => item.transactionIDs.map((id) => state.app.transactions[id])
     ).filter((transaction) => !!transaction);
 
-    // Total up the amount spent from the item so far, and how much is left
-    const totalSpent = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
-    const amountRemaining = item.amount - totalSpent;
+    const transactionTotal = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
 
     return (
         <>
@@ -52,8 +45,8 @@ export default function BudgetItemComponent({
                                                                   sx={{marginLeft: '10px'}}/></span> : <></>}
                     </Typography>
                 </TableCell>
-                <TableCell>${item.amount}</TableCell>
-                <TableCell>${amountRemaining}</TableCell>
+                <TableCell>{CURRENCY_FORMAT.format(item.amount)}</TableCell>
+                <TableCell>{CURRENCY_FORMAT.format(item.amount - transactionTotal)}</TableCell>
                 <TableCell>
                     <IconButton title="Edit" size={'small'}><Edit/></IconButton>
                 </TableCell>

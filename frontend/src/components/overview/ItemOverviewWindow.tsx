@@ -1,10 +1,6 @@
 'use client';
 
-import {useAppDispatch, useAppSelector} from "../../lib/hooks";
-import BottomRightPlusButtonComponent from "../budget/BottomRightPlusButtonComponent";
-import {RootState} from "../../store/store";
-import {Budget, Item, Section, Transaction} from "../../domain/types";
-
+import {useAppDispatch, useAppSelector} from "@/lib/hooks";
 import {
     Dialog,
     DialogActions,
@@ -14,27 +10,16 @@ import {
     Button,
     TextField,
     IconButton,
-    Select,
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
     Radio,
-    AccordionProps,
-    styled,
-    Drawer, InputLabel, Box, Typography, Divider, LinearProgress, Container, Table, TableRow, TableHead, TableCell,
+Box, Typography, Divider, Table, TableRow, TableHead, TableCell,
     TableBody, RadioGroup, FormGroup, FormLabel, FormControlLabel
 } from "@mui/material";
-import {linearProgressClasses} from "@mui/material";
 import {useEffect, useState} from "react";
 import {Add, Close, Delete, Edit, ExpandMore} from "@mui/icons-material";
-import {bgColor} from "@/lib/color_utils";
 import React from "react";
-import {useSearchParams} from "next/navigation";
-import {Separator} from "@base-ui/react";
-import CircularProgress from "@mui/material/CircularProgress";
-import {GREEN} from "@/app/theme";
 import NewTransactionDialog from "@/components/overview/NewTransactionDialog";
-import AmountSpentProgressBar from "@/components/overview/AmountSpentProgressBar";
+import {ExpensesBar, IncomeBar} from "./IncomeExpenseBars";
+import { CURRENCY_FORMAT } from "@/lib/formatters";
 
 const DAY_FORMAT = Intl.DateTimeFormat(undefined, {
     day: "numeric",
@@ -61,13 +46,13 @@ export default function ItemOverviewWindow(
         setOpenID,
         openKind,
         setOpenKind,
-        setIsOpen,
+        onClose,
     }: Readonly<{
         openID: number,
         setOpenID: (newOpenID: number) => unknown,
         openKind: 'budget' | 'section' | 'item',
         setOpenKind: (newOpenKind: 'budget' | 'section' | 'item') => unknown,
-        setIsOpen: (newIsOpen: boolean) => unknown
+        onClose: () => unknown
     }>) {
 
     const budgets = useAppSelector((state) => state.app.budgets);
@@ -89,25 +74,29 @@ export default function ItemOverviewWindow(
 
     const item = items?.[openID];
 
+    useEffect(() => {
+        if (!item) {
+            onClose();
+        }
+    }, []);
+
     if (!item) {
-        return (<></>) // TODO: say "that item no longer exists"
+        return (<></>); // TODO: say "that item no longer exists"
     }
 
     const itemTransactions = Object.values(transactions)
         .filter(transaction => !!transaction)
         .filter(transaction => transaction.itemID === openID);
 
-    const transactionTotal = itemTransactions.reduce((accumulator: number, transaction) => accumulator + transaction.amount, 0);
-
-    const remainingAmount = item.amount - transactionTotal;
-
     return (<Box sx={{display: 'grid', gap: 2, margin: 1}}>
         <Box display={'flex'} flexDirection={'row'} width={'100%'} alignItems={'center'}
              justifyContent={'space-between'}>
             <Typography variant={"h4"}>{item.name}</Typography>
-            <IconButton sx={{alignSelf: 'flex-end'}} title={"Close Overview"} onClick={(e) => setIsOpen(false)}><Close/></IconButton>
+            <IconButton sx={{alignSelf: 'flex-end'}} title={"Back"} onClick={onClose}><Close/></IconButton>
         </Box>
-        <AmountSpentProgressBar amountSpent={transactionTotal} amountPlanned={item.amount}/>
+        {
+            item.kind === 'income' ? <IncomeBar incomeItems={[item]}/> : <ExpensesBar expenseItems={[item]}/>
+        }
         <Divider/>
         <Typography variant={"h5"}>Details</Typography>
         <TextField label={"Name"} value={item.name} onChange={(e) => dispatch({
@@ -168,7 +157,7 @@ export default function ItemOverviewWindow(
                             <TableCell sx={{padding: '4px'}}>{DAY_FORMAT.format(date)}</TableCell>
                             <TableCell sx={{padding: '4px'}}>{TIME_FORMAT.format(date)}</TableCell>
                             <TableCell sx={{padding: '4px'}}>
-                                {item.kind === 'income' ? "+" : "-"}${transaction.amount}
+                                {CURRENCY_FORMAT.format((item.kind === 'income' ? 1 : -1) * transaction.amount)}
                             </TableCell>
                             <TableCell sx={{padding: '4px'}}><IconButton title={"Edit Transaction"} size={"small"}
                                                                          onClick={e => setTransactionBeingEdited(transaction.id)}><Edit/></IconButton></TableCell>

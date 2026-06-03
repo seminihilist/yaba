@@ -7,7 +7,7 @@ export default function AddSectionButton({openSectionInOverview}: Readonly<{
     openSectionInOverview: (id: number) => unknown;
 }>) {
     const openBudgetId = useAppSelector(state => state.user.openBudget);
-    if (!openBudgetId) throw Error("openBudgetId must not be null");
+    if (!openBudgetId) return;
 
     const dispatch = useAppDispatch();
 

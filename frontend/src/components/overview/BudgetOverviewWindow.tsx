@@ -1,24 +1,16 @@
 import {Budget} from "@/domain/types";
 import {useAppSelector} from "@/lib/hooks";
 import {
-    Box,
-    Button,
-    Dialog, DialogActions,
-    DialogContent, DialogContentText,
-    DialogTitle,
-    Divider,
-    IconButton,
-    TextField,
+    Box, Divider,
     Typography
 } from "@mui/material";
-import {Close, Delete} from "@mui/icons-material";
-import AmountSpentProgressBar from "@/components/overview/AmountSpentProgressBar";
 import React from "react";
 import _ from "lodash";
+import {ExpensesBar, IncomeBar} from "@/components/overview/IncomeExpenseBars";
+import {CURRENCY_FORMAT} from "@/lib/formatters";
 
-export default function BudgetOverviewWindow({budget, setIsOpen}: Readonly<{
+export default function BudgetOverviewWindow({budget}: Readonly<{
     budget: Budget;
-    setIsOpen: (newIsOpen: boolean) => unknown;
 }>) {
     const DAY_FORMAT = Intl.DateTimeFormat(undefined, {
         day: "numeric",
@@ -31,14 +23,12 @@ export default function BudgetOverviewWindow({budget, setIsOpen}: Readonly<{
     const items = useAppSelector(state => state.app.items);
     const budgetItems = budgetSections.flatMap(section => section.itemIDs.map(itemID => items[itemID])).filter(item => !!item);
 
-    const [incomeItems, expenseItems] = _.partition(budgetItems, (item) => item.kind === 'income');
+    const [incomeItems, expenseItems] = _.partition(budgetItems, item => item.kind === 'income');
 
-    const transactions = useAppSelector(state => state.app.transactions);
-    const incomeTransactions = incomeItems.flatMap(item => item.transactionIDs.map(transactionID => transactions[transactionID])).filter(transaction => !!transaction);
-    const expenseTransactions = expenseItems.flatMap(item => item.transactionIDs.map(transactionID => transactions[transactionID])).filter(transaction => !!transaction);
+    const totalIncome = _.sum(incomeItems.map(item => item.amount));
+    const totalExpenses = _.sum(expenseItems.map(item => item.amount));
 
-    const totalSpent = expenseTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
-    const totalPlanned = budgetItems.reduce((sum, item) => sum + item.amount, 0);
+    const plannedBalance = totalIncome - totalExpenses;
 
     return (
         <Box sx={{display: 'grid', gap: 2, margin: 1}}>
@@ -48,7 +38,17 @@ export default function BudgetOverviewWindow({budget, setIsOpen}: Readonly<{
                     variant={"h4"}>{DAY_FORMAT.format(budget.startTime)} to {DAY_FORMAT.format(budget.endTime)}
                 </Typography>
             </Box>
-            <AmountSpentProgressBar amountSpent={totalSpent} amountPlanned={totalPlanned}/>
+            <Divider/>
+            <Typography variant={'h5'}>Month Overview</Typography>
+            <Typography variant={'body2'}>Planned Income: {CURRENCY_FORMAT.format(totalIncome)}</Typography>
+            <Typography variant={'body2'}>Planned Expenses: {CURRENCY_FORMAT.format(totalExpenses)}</Typography>
+            <Typography variant={'body1'}>Balance: {CURRENCY_FORMAT.format(plannedBalance)}</Typography>
+            <Divider/>
+            <Typography variant={'h5'}>Income This Month</Typography>
+            <IncomeBar incomeItems={incomeItems}/>
+            <Divider/>
+            <Typography variant={'h5'}>Expenses This Month</Typography>
+            <ExpensesBar expenseItems={expenseItems}/>
         </Box>
     )
 }

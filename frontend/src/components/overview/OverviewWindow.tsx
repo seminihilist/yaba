@@ -24,7 +24,7 @@ export default function OverviewWindow(
         setOpenID: (newOpenID: number) => unknown,
         openKind: 'budget' | 'section' | 'item',
         setOpenKind: (newOpenKind: 'budget' | 'section' | 'item') => unknown,
-        onClose: (newIsOpen: boolean) => unknown
+        onClose: () => unknown
     }>) {
 
     const budgets = useAppSelector((state) => state.app.budgets);
@@ -37,16 +37,16 @@ export default function OverviewWindow(
     if (openKind === "budget") {
         if (!budgets[openID]) return (<></>);
 
-        return (<BudgetOverviewWindow budget={budgets[openID]} setIsOpen={onClose}/>);
+        return (<BudgetOverviewWindow budget={budgets[openID]} />);
     } else if (openKind === "section") {
         if (!sections[openID]) {
             return (<></>); // TODO: close the overview window
         }
 
-        return (<SectionOverviewWindow section={sections[openID]} setIsOpen={onClose}/>);
+        return (<SectionOverviewWindow section={sections[openID]} onClose={onClose}/>);
     } else if (openKind === "item") {
         return (<ItemOverviewWindow openID={openID} setOpenID={setOpenID} openKind={openKind} setOpenKind={setOpenKind}
-                                    setIsOpen={onClose}/>);
+                                    onClose={onClose}/>);
     } else {
         return null;
     }

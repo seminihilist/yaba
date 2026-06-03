@@ -1,9 +1,7 @@
 'use client';
 
-import {useAppDispatch, useAppSelector} from "../../lib/hooks";
-import BottomRightPlusButtonComponent from "../budget/BottomRightPlusButtonComponent";
-import {RootState} from "../../store/store";
-import {Budget, Item, Section, Transaction} from "../../domain/types";
+import {useAppDispatch, useAppSelector} from "@/lib/hooks";
+import {Section} from "@/domain/types";
 
 import {
     Dialog,
@@ -14,20 +12,13 @@ import {
     Button,
     TextField,
     IconButton,
-    Select,
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Radio,
-    AccordionProps,
-    styled,
-    Drawer, InputLabel, Box, Typography, Divider, LinearProgress, Container, Table, TableRow, TableHead, TableCell,
-    TableBody
+    Box, Typography, Divider
 } from "@mui/material";
-import {useEffect, useState} from "react";
-import {Add, Close, Delete, Edit, ExpandMore} from "@mui/icons-material";
+import {useState} from "react";
+import {Close, Delete} from "@mui/icons-material";
 import React from "react";
-import AmountSpentProgressBar from "@/components/overview/AmountSpentProgressBar";
+import {ExpensesBar, IncomeBar} from "./IncomeExpenseBars";
+import _ from "lodash";
 
 /**
  * The overview window.
@@ -37,18 +28,13 @@ import AmountSpentProgressBar from "@/components/overview/AmountSpentProgressBar
 export default function SectionOverviewWindow(
     {
         section,
-        setIsOpen,
+        onClose,
     }: Readonly<{
         section: Section;
-        setIsOpen: (newIsOpen: boolean) => unknown;
+        onClose: () => unknown;
     }>) {
 
     const sectionItems = Object.values(useAppSelector((state) => state.app.items)).filter(item => !!item).filter((item) => item.sectionID === section.id);
-    const transactions = useAppSelector((state) => state.app.transactions);
-    const sectionTransactions = sectionItems.flatMap(item => item.transactionIDs.map(transactionID => transactions[transactionID])).filter(transaction => !!transaction);
-
-    const totalSpent = sectionTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
-    const totalPlanned = sectionItems.reduce((sum, item) => sum + item.amount, 0);
 
     const [deleteSectionDialogIsOpen, setDeleteSectionDialogIsOpen] = useState(false);
 
@@ -57,13 +43,28 @@ export default function SectionOverviewWindow(
 
     const dispatch = useAppDispatch();
 
+    const [incomeItems, expenseItems] = _.partition(sectionItems, item => item.kind === 'income');
+
     return (<Box sx={{display: 'grid', gap: 2, margin: 1}}>
         <Box display={'flex'} flexDirection={'row'} width={'100%'} alignItems={'center'}
              justifyContent={'space-between'}>
             <Typography variant={"h4"}>{section.name}</Typography>
-            <IconButton sx={{alignSelf: 'flex-end'}} title={"Close Overview"} onClick={(e) => setIsOpen(false)}><Close/></IconButton>
+            <IconButton sx={{alignSelf: 'flex-end'}} title={"Back"} onClick={onClose}><Close/></IconButton>
         </Box>
-        <AmountSpentProgressBar amountSpent={totalSpent} amountPlanned={totalPlanned}/>
+        {incomeItems.length > 0 &&
+            <>
+                <Divider/>
+                <Typography variant={'h5'}>Income in {section.name}</Typography>
+                <IncomeBar incomeItems={incomeItems}/>
+            </>
+        }
+        {expenseItems.length > 0 &&
+            <>
+                <Divider/>
+                <Typography variant={'h5'}>Expenses in {section.name}</Typography>
+                <ExpensesBar expenseItems={expenseItems}/>
+            </>
+        }
         <Divider/>
         <Typography variant={"h5"}>Details</Typography>
         <TextField label={"Name"} value={section.name} onChange={(e) => dispatch({
@@ -81,7 +82,7 @@ export default function SectionOverviewWindow(
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDeleteSectionDialog}>Cancel</Button>
-                <Button type="submit" color={'error'} onClick={e => {
+                <Button type="submit" color={'error'} onClick={() => {
                     dispatch({
                         type: "app/deleteSection",
                         payload: {

@@ -1,6 +1,6 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
-import React, {useId} from "react";
-import {useAppDispatch} from "../../lib/hooks";
+import React, {useId, SubmitEvent} from "react";
+import {useAppDispatch} from "@/lib/hooks";
 
 export default function NewTransactionDialog({isOpen, itemID, close}: Readonly<{
     isOpen: boolean,
@@ -11,13 +11,12 @@ export default function NewTransactionDialog({isOpen, itemID, close}: Readonly<{
 
     const formId = useId();
 
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries((formData as any).entries());
         const amount = Number(formJson.amount);
-
 
         dispatch({
             type: "app/addTransaction",
@@ -54,7 +53,7 @@ export default function NewTransactionDialog({isOpen, itemID, close}: Readonly<{
                 </form>
             </DialogContent>
             <DialogActions>
-                <Button onClick={(e) => close()}>Cancel</Button>
+                <Button onClick={() => close()}>Cancel</Button>
                 <Button type="submit" form={formId}>Add</Button>
             </DialogActions>
         </Dialog>

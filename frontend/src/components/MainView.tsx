@@ -36,7 +36,10 @@ export default function MainView({budget}: Readonly<{ budget: Budget }>) {
             }}>
                 <OverviewWindow openID={overviewOpenID} setOpenID={setOverviewOpenID}
                                 openKind={overviewOpenKind} setOpenKind={setOverviewOpenKind}
-                                onClose={() => null}/>
+                                onClose={() => {
+                                    setOverviewOpenID(budget.id);
+                                    setOverviewOpenKind('budget');
+                                }}/>
             </Drawer>
         </div>
     )

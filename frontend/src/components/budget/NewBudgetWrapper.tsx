@@ -26,7 +26,7 @@ export default function NewBudgetWrapper({children}: Readonly<{
     const openNewBudgetDialog = () => setNewBudgetDialogIsOpen(true);
     const closeNewBudgetDialog = () => setNewBudgetDialogIsOpen(false);
 
-    const hasChecked = useRef(false);
+    const hasCheckedForNewMonth = useRef(false);
 
     const hasCompletedSetup = useAppSelector(state => state.user.hasCompletedSetup);
     const [setupDialogIsOpen, setSetupDialogIsOpen] = useState(false);
@@ -34,7 +34,8 @@ export default function NewBudgetWrapper({children}: Readonly<{
 
     useEffect(() => {
         if (!hasCompletedSetup) {
-            setSetupDialogIsOpen(true);
+            // TODO: extract creating this default budget into its own action in the store
+            // TODO: offer a choice of multiple templates
 
             const monthStart = new Date();
             monthStart.setDate(1);
@@ -49,26 +50,85 @@ export default function NewBudgetWrapper({children}: Readonly<{
                 endTime: monthEnd.getTime()
             }));
 
-            const {payload: {newId: incomeSectionId}} = dispatch(addSection({
+            const {payload: {newId: revenueSectionId}} = dispatch(addSection({
                 budgetID: newBudgetId as number,
-                name: "Income",
-            }))
+                name: "Revenue",
+            }));
 
             dispatch(addItem({
-                sectionID: incomeSectionId as number,
+                sectionID: revenueSectionId as number,
                 itemName: "Paycheck",
-                itemAmount: 5000,
+                itemAmount: 6000,
                 kind: 'income',
+            }));
+
+            const {payload: {newId: fixedCostsSectionId}} = dispatch(addSection({
+                budgetID: newBudgetId as number,
+                name: "Fixed Costs",
+            }));
+
+            dispatch(addItem({
+                sectionID: fixedCostsSectionId as number,
+                itemName: "Mortgage",
+                itemAmount: 2300,
+                kind: 'expense',
+            }));
+
+            dispatch(addItem({
+                sectionID: fixedCostsSectionId as number,
+                itemName: "Transportation",
+                itemAmount: 1000,
+                kind: 'expense',
+            }));
+
+            const {payload: {newId: savingsAndInvestmentsSectionId}} = dispatch(addSection({
+                budgetID: newBudgetId as number,
+                name: "Savings and Investments",
+            }));
+
+            dispatch(addItem({
+                sectionID: savingsAndInvestmentsSectionId as number,
+                itemName: "Savings",
+                itemAmount: 800,
+                kind: 'expense',
+            }));
+
+            const {payload: {newId: necessitiesSectionId}} = dispatch(addSection({
+                budgetID: newBudgetId as number,
+                name: "Necessities",
+            }));
+
+            dispatch(addItem({
+                sectionID: necessitiesSectionId as number,
+                itemName: "Groceries",
+                itemAmount: 1200,
+                kind: 'expense',
+            }));
+
+            const {payload: {newId: spendingSection}} = dispatch(addSection({
+                budgetID: newBudgetId as number,
+                name: "Spending",
+            }));
+
+            dispatch(addItem({
+                sectionID: spendingSection as number,
+                itemName: "Eating Out",
+                itemAmount: 350,
+                kind: 'expense',
             }));
 
             dispatch(setOpenBudget({id: newBudgetId as number}));
 
             dispatch(setHasCompletedSetup({hasCompletedSetup: true}));
+
+            setSetupDialogIsOpen(true);
         } else if (!openBudget) {
+            // If the currently open budget has ceased to exist for whatever reason, change it to the most recent
+            // budget.
             dispatch(setOpenBudget({
                 id: budgets.toSorted((left, right) => right.startTime - left.startTime)[0].id,
             }))
-        } else if (!hasChecked.current) {
+        } else if (!hasCheckedForNewMonth.current) {
             const now = Date.now();
 
             if (openBudget.state === 'active' && now > openBudget.endTime) {
@@ -92,7 +152,7 @@ export default function NewBudgetWrapper({children}: Readonly<{
                 openNewBudgetDialog();
             }
 
-            hasChecked.current = true;
+            hasCheckedForNewMonth.current = true;
         }
     });
 

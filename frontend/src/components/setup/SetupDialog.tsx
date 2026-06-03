@@ -6,7 +6,6 @@ import {
     DialogContentText,
     DialogTitle,
 } from "@mui/material";
-import {useAppDispatch} from "@/lib/hooks";
 
 export default function SetupDialog({isOpen, close}: Readonly<{ isOpen: boolean; close: () => unknown; }>) {
     return (
@@ -14,8 +13,8 @@ export default function SetupDialog({isOpen, close}: Readonly<{ isOpen: boolean;
             <DialogTitle>Welcome to YABA!</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    We've created a basic budget outline for you to get started. Feel free
-                    to edit it for your own purposes!
+                    We've created a basic budget outline with some default numbers to get you started. Make sure to
+                    change it to fit your own situation!
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
