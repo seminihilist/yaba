@@ -9,22 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@base-ui/react": "^1.5.0",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
     "@mui/material-nextjs": "^7.1.1",
+    "@mui/x-charts": "^9.3.0",
     "@reduxjs/toolkit": "^2.7.0",
+    "@types/lodash": "^4.17.24",
     "@types/luxon": "^3.7.1",
     "immutable": "^5.1.4",
     "jquery": "^3.7.1",
+    "lodash": "^4.18.1",
     "luxon": "^3.7.2",
-    "next": "16.1.5",
+    "next": "^16.2.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "redux-remember": "^6.0.2",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
