@@ -32,8 +32,6 @@ export default function NewBudgetWrapper({children}: Readonly<{
     const [setupDialogIsOpen, setSetupDialogIsOpen] = useState(false);
     const closeSetupDialog = () => setSetupDialogIsOpen(false);
 
-    let budgetId = null;
-
     useEffect(() => {
         if (!hasCompletedSetup) {
             setSetupDialogIsOpen(true);
@@ -116,11 +114,12 @@ export default function NewBudgetWrapper({children}: Readonly<{
     return (<>
         <SetupDialog isOpen={setupDialogIsOpen} close={closeSetupDialog}/>
         <Dialog open={newBudgetDialogIsOpen}>
-            <DialogTitle>New TODO!, new budget!</DialogTitle>
+            <DialogTitle>New month, new budget!</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    We've copied your previous plan to the new TODO!. Make sure to review it, ensure everything has been
-                    copied correctly, and make any changes to this new TODO!s plan.
+                    We've copied your previous plan to the new month. Make sure to review it, ensure everything has been
+                    copied correctly, and if your planned income or expenses are different from the previous month,
+                    make sure to update those as well.
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
