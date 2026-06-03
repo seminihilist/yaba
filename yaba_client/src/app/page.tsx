@@ -1,10 +1,12 @@
-import NavigationContainer from "./components/NavigationContainer"
+'use client';
 
-export default function Home() {
-	return (
-		// Nothing
-		<NavigationContainer isMobile={true}>
-			<p>This is text!</p>
-		</NavigationContainer>
-	);
+import NewBudgetWrapper from "@/components/budget/NewBudgetWrapper";
+import MainView from "@/components/MainView";
+
+export default function BudgetPage() {
+    return (
+        <NewBudgetWrapper>
+            {(budget) => <MainView budget={budget}/>}
+        </NewBudgetWrapper>
+    );
 }
