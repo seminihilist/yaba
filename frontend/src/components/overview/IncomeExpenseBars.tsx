@@ -4,7 +4,7 @@ import { Item } from "@/domain/types";
 import {useAppSelector} from "@/lib/hooks";
 import {CURRENCY_FORMAT} from "@/lib/formatters";
 
-const BolderLinearProgress = styled(LinearProgress)(({theme}) => ({
+const BolderLinearProgress = styled(LinearProgress)(({
     height: 10,
     borderRadius: 5,
     transition: 'left 0.8s',

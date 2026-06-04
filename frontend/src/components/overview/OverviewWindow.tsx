@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import {useAppDispatch, useAppSelector} from "@/lib/hooks";
+import {useAppSelector} from "@/lib/hooks";
 import ItemOverviewWindow from "./ItemOverviewWindow";
 import SectionOverviewWindow from "@/components/overview/SectionOverviewWindow";
 import BudgetOverviewWindow from "@/components/overview/BudgetOverviewWindow";
@@ -29,10 +29,7 @@ export default function OverviewWindow(
 
     const budgets = useAppSelector((state) => state.app.budgets);
     const sections = useAppSelector((state) => state.app.sections);
-    const items = useAppSelector((state) => state.app.items);
-    const transactions = useAppSelector((state) => state.app.transactions);
-
-    const dispatch = useAppDispatch();
+    //const items = useAppSelector((state) => state.app.items);
 
     if (openKind === "budget") {
         if (!budgets[openID]) return (<></>);

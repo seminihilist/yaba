@@ -96,7 +96,7 @@ export const appSlice = createSlice({
 
             budget.state = 'archived';
 
-            let copiedSectionIDs = [];
+            const copiedSectionIDs = [];
 
             const newBudgetID = state.idCounter++;
 
@@ -104,7 +104,7 @@ export const appSlice = createSlice({
                 const section = state.sections[sectionID];
                 if (!section) continue;
 
-                let copiedItemIDs = [];
+                const copiedItemIDs = [];
 
                 const newSectionID = state.idCounter++;
 
@@ -394,4 +394,3 @@ export const {
     migrateBudget
 } = appSlice.actions;
 
-export type AppSlice = typeof appSlice;

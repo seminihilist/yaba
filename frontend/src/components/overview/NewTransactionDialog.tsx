@@ -15,7 +15,7 @@ export default function NewTransactionDialog({isOpen, itemID, close}: Readonly<{
         event.preventDefault()
 
         const formData = new FormData(event.currentTarget);
-        const formJson = Object.fromEntries((formData as any).entries());
+        const formJson = Object.fromEntries(formData.entries());
         const amount = Number(formJson.amount);
 
         dispatch({

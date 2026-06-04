@@ -4,7 +4,6 @@ import {configureStore} from "@reduxjs/toolkit";
 import {appSlice} from "@/store/app";
 import {userSlice} from "@/store/user";
 import {AppState, UserState} from "@/domain/types";
-import {rememberEnhancer} from "redux-remember";
 
 /**
  * The key in `localStorage` where state is persisted.

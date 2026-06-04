@@ -154,7 +154,7 @@ export default function NewBudgetWrapper({children}: Readonly<{
 
             hasCheckedForNewMonth.current = true;
         }
-    });
+    }, [hasCompletedSetup, openBudget, dispatch, budgets]);
 
     const budget2 = useAppSelector(state => state.user.openBudget != null ? state.app.budgets[state.user.openBudget] : null)
 
@@ -164,7 +164,7 @@ export default function NewBudgetWrapper({children}: Readonly<{
                 <DialogTitle>Something has gone wrong.</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        We're very sorry, but something has gone horribly wrong on our end. Please reload the page.
+                        We&apos;re very sorry, but something has gone horribly wrong on our end. Please reload the page.
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
@@ -177,7 +177,7 @@ export default function NewBudgetWrapper({children}: Readonly<{
             <DialogTitle>New month, new budget!</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    We've copied your previous plan to the new month. Make sure to review it, ensure everything has been
+                    We&apos;ve copied your previous plan to the new month. Make sure to review it, ensure everything has been
                     copied correctly, and if your planned income or expenses are different from the previous month,
                     make sure to update those as well.
                 </DialogContentText>

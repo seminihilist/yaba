@@ -15,7 +15,7 @@ Box, Typography, Divider, Table, TableRow, TableHead, TableCell,
     TableBody, RadioGroup, FormGroup, FormLabel, FormControlLabel
 } from "@mui/material";
 import {useEffect, useState} from "react";
-import {Add, Close, Delete, Edit, ExpandMore} from "@mui/icons-material";
+import {Add, Close, Delete, Edit} from "@mui/icons-material";
 import React from "react";
 import NewTransactionDialog from "@/components/overview/NewTransactionDialog";
 import {ExpensesBar, IncomeBar} from "./IncomeExpenseBars";
@@ -43,9 +43,6 @@ const TIME_FORMAT = Intl.DateTimeFormat(undefined, {
 export default function ItemOverviewWindow(
     {
         openID,
-        setOpenID,
-        openKind,
-        setOpenKind,
         onClose,
     }: Readonly<{
         openID: number,
@@ -55,8 +52,6 @@ export default function ItemOverviewWindow(
         onClose: () => unknown
     }>) {
 
-    const budgets = useAppSelector((state) => state.app.budgets);
-    const sections = useAppSelector((state) => state.app.sections);
     const items = useAppSelector((state) => state.app.items);
     const transactions = useAppSelector((state) => state.app.transactions);
 
@@ -78,7 +73,7 @@ export default function ItemOverviewWindow(
         if (!item) {
             onClose();
         }
-    }, []);
+    }, [item, onClose]);
 
     if (!item) {
         return (<></>); // TODO: say "that item no longer exists"
@@ -149,7 +144,7 @@ export default function ItemOverviewWindow(
                 </TableRow>
             </TableHead>
             <TableBody>
-                {itemTransactions.toSorted((left, right) => right.timestamp - left.timestamp).map((transaction, index) => {
+                {itemTransactions.toSorted((left, right) => right.timestamp - left.timestamp).map((transaction) => {
                     const date = new Date(transaction.timestamp);
 
                     return (
@@ -160,16 +155,16 @@ export default function ItemOverviewWindow(
                                 {CURRENCY_FORMAT.format((item.kind === 'income' ? 1 : -1) * transaction.amount)}
                             </TableCell>
                             <TableCell sx={{padding: '4px'}}><IconButton title={"Edit Transaction"} size={"small"}
-                                                                         onClick={e => setTransactionBeingEdited(transaction.id)}><Edit/></IconButton></TableCell>
+                                                                         onClick={() => setTransactionBeingEdited(transaction.id)}><Edit/></IconButton></TableCell>
                             <TableCell sx={{padding: '4px'}}><IconButton title={"Delete Transaction"} size={"small"}
-                                                                         onClick={e => setTransactionBeingDeleted(transaction.id)}><Delete
+                                                                         onClick={() => setTransactionBeingDeleted(transaction.id)}><Delete
                                 color={"error"}/></IconButton></TableCell>
                         </TableRow>
                     );
                 })}
             </TableBody>
         </Table>
-        <Button variant={"contained"} startIcon={<Add/>} onClick={(e) => setNewTransactionDialogIsOpen(true)}>Add
+        <Button variant={"contained"} startIcon={<Add/>} onClick={() => setNewTransactionDialogIsOpen(true)}>Add
             Transaction</Button>
         <NewTransactionDialog isOpen={newTransactionDialogIsOpen} close={() => setNewTransactionDialogIsOpen(false)}
                               itemID={item.id}/>
@@ -210,7 +205,7 @@ export default function ItemOverviewWindow(
                 </form>
             </DialogContent>
             <DialogActions>
-                <Button onClick={(e) => setTransactionBeingEdited(null)}>Cancel</Button>
+                <Button onClick={() => setTransactionBeingEdited(null)}>Cancel</Button>
                 <Button type="submit">Edit</Button>
             </DialogActions>
         </Dialog>
@@ -223,8 +218,8 @@ export default function ItemOverviewWindow(
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={(e) => setTransactionBeingDeleted(null)}>Cancel</Button>
-                <Button type="submit" onClick={e => {
+                <Button onClick={() => setTransactionBeingDeleted(null)}>Cancel</Button>
+                <Button type="submit" onClick={() => {
                     dispatch({
                         type: "app/deleteTransaction",
                         payload: {
@@ -238,7 +233,7 @@ export default function ItemOverviewWindow(
         </Dialog>
         <Dialog open={deleteItemDialogIsOpen}
                 onClose={closeDeleteItemDialog}>
-            <DialogTitle>Delete "{item.name}"?</DialogTitle>
+            <DialogTitle>Delete &quot;{item.name}&quot;?</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Are you sure? You cannot undo this action.
@@ -246,7 +241,7 @@ export default function ItemOverviewWindow(
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDeleteItemDialog}>Cancel</Button>
-                <Button type="submit" color={'error'} onClick={e => {
+                <Button type="submit" color={'error'} onClick={() => {
                     dispatch({
                         type: "app/deleteItem",
                         payload: {

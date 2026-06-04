@@ -6,10 +6,10 @@ import {addSection} from "@/store/app";
 export default function AddSectionButton({openSectionInOverview}: Readonly<{
     openSectionInOverview: (id: number) => unknown;
 }>) {
+    const dispatch = useAppDispatch();
+
     const openBudgetId = useAppSelector(state => state.user.openBudget);
     if (openBudgetId == null) return;
-
-    const dispatch = useAppDispatch();
 
     const onClick = () => {
         const {payload: {newId: newSectionId}} = dispatch(addSection({

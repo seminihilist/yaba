@@ -1,20 +1,11 @@
 "use client";
 
 import BudgetSectionComponent from "./BudgetSectionComponent";
-import {useAppDispatch, useAppSelector} from "@/lib/hooks";
-import {COLORS} from "@/lib/color_utils";
-import {AppDispatch} from "../../store/store";
+import {useAppSelector} from "@/lib/hooks";
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    TextField,
-    DialogActions,
-    Button,
     Table, TableHead, TableCell, TableRow, TableBody, Card, Container
 } from "@mui/material";
-import React, {useState} from "react";
+import React from "react";
 import {Budget} from "@/domain/types";
 import AddSectionButton from "@/components/budget/AddSectionButton";
 
@@ -36,11 +27,6 @@ export default function BudgetWindow({
     const mySections = budget.sections.map(section => allSections[section])
         .filter(section => !!section); // todo: errors if an undefined section is present
 
-    const dispatch: AppDispatch = useAppDispatch();
-
-    const [newSectionDialogIsOpen, setNewSectionDialogIsOpen] = useState(false);
-    const closeNewSectionDialog = setNewSectionDialogIsOpen.bind(null, false);
-
     return (
         <>
             <Container sx={{padding: 2}}>
@@ -60,8 +46,8 @@ export default function BudgetWindow({
                             </TableRow>
                         </TableHead>
                         <TableBody sx={{display: 'table-row-group'}}>
-                            {[...mySections.map((section, index) => (
-                                <BudgetSectionComponent budget={budget} section={section} key={section.id}
+                            {[...mySections.map((section) => (
+                                <BudgetSectionComponent section={section} key={section.id}
                                                         isOpenInOverview={sectionIsOpenInOverview(section.id)}
                                                         openInOverview={() => openSectionInOverview(section.id)}
                                                         itemIsOpenInOverview={itemIsOpenInOverview}
@@ -75,56 +61,6 @@ export default function BudgetWindow({
                     </Table>
                 </Card>
             </Container>
-            <Dialog
-                open={newSectionDialogIsOpen}
-                onClose={closeNewSectionDialog}
-                slotProps={{
-                    paper: {
-                        component: "form",
-                        onSubmit: (event: React.SubmitEvent<HTMLFormElement>) => {
-                            event.preventDefault()
-
-                            const formData = new FormData(event.currentTarget);
-                            const formJson = Object.fromEntries((formData as any).entries());
-                            const sectionName = formJson.sectionName;
-                            console.log(sectionName);
-
-                            dispatch({
-                                "type": "app/addSection",
-                                "payload": {
-                                    "budgetID": budget.id,
-                                    "name": sectionName,
-                                    "color": COLORS[Math.round(Math.random() * (COLORS.length - 1))]
-                                }
-                            });
-
-                            // Close the dialog
-                            setNewSectionDialogIsOpen(false);
-                        }
-                    }
-                }}>
-                <DialogTitle>New Section</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Please enter the name of your new section.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        id="name"
-                        name="sectionName"
-                        label="Section Name"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={closeNewSectionDialog}>Cancel</Button>
-                    <Button type="submit">Create</Button>
-                </DialogActions>
-            </Dialog>
         </>
     )
 }
