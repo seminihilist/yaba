@@ -13,7 +13,7 @@ export default function SetupDialog({isOpen, close}: Readonly<{ isOpen: boolean;
             <DialogTitle>Welcome to YABA!</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    We&apos;ve created a basic budget outline with some default numbers to get you started. Make sure to
+                    We&apos;ve created a basic budget outline to get you started. Make sure to
                     change it to fit your own situation!
                 </DialogContentText>
             </DialogContent>

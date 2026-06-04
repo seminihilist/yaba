@@ -4,7 +4,7 @@ import React, {ReactNode, useEffect, useRef, useState} from "react";
 import {Budget} from "@/domain/types";
 import {useAppDispatch, useAppSelector} from "@/lib/hooks";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
-import {addBudget, addItem, addSection, migrateBudget} from "@/store/app";
+import {addBudget, addSection, migrateBudget} from "@/store/app";
 import {setHasCompletedSetup, setOpenBudget} from "@/store/user";
 import SetupDialog from "@/components/setup/SetupDialog";
 
@@ -46,71 +46,29 @@ export default function NewBudgetWrapper({children}: Readonly<{
                 endTime: monthEnd.getTime()
             }));
 
-            const {payload: {newId: revenueSectionId}} = dispatch(addSection({
+            dispatch(addSection({
                 budgetID: newBudgetId as number,
                 name: "Revenue",
             }));
 
-            dispatch(addItem({
-                sectionID: revenueSectionId as number,
-                itemName: "Paycheck",
-                itemAmount: 6000,
-                kind: 'income',
-            }));
-
-            const {payload: {newId: fixedCostsSectionId}} = dispatch(addSection({
+            dispatch(addSection({
                 budgetID: newBudgetId as number,
                 name: "Fixed Costs",
             }));
 
-            dispatch(addItem({
-                sectionID: fixedCostsSectionId as number,
-                itemName: "Mortgage",
-                itemAmount: 2300,
-                kind: 'expense',
-            }));
-
-            dispatch(addItem({
-                sectionID: fixedCostsSectionId as number,
-                itemName: "Transportation",
-                itemAmount: 1000,
-                kind: 'expense',
-            }));
-
-            const {payload: {newId: savingsAndInvestmentsSectionId}} = dispatch(addSection({
+            dispatch(addSection({
                 budgetID: newBudgetId as number,
                 name: "Savings and Investments",
             }));
 
-            dispatch(addItem({
-                sectionID: savingsAndInvestmentsSectionId as number,
-                itemName: "Savings",
-                itemAmount: 800,
-                kind: 'expense',
-            }));
-
-            const {payload: {newId: necessitiesSectionId}} = dispatch(addSection({
+            dispatch(addSection({
                 budgetID: newBudgetId as number,
                 name: "Necessities",
             }));
 
-            dispatch(addItem({
-                sectionID: necessitiesSectionId as number,
-                itemName: "Groceries",
-                itemAmount: 1200,
-                kind: 'expense',
-            }));
-
-            const {payload: {newId: spendingSection}} = dispatch(addSection({
+            dispatch(addSection({
                 budgetID: newBudgetId as number,
-                name: "Spending",
-            }));
-
-            dispatch(addItem({
-                sectionID: spendingSection as number,
-                itemName: "Eating Out",
-                itemAmount: 350,
-                kind: 'expense',
+                name: "Guilt-free Spending",
             }));
 
             dispatch(setOpenBudget({id: newBudgetId as number}));
