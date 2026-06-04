@@ -1,0 +1,12 @@
+{
+  "version": true,
+  "licenses": true,
+  "repository": true,
+  "publisher": false,
+  "email": false,
+  "url": false,
+  "path": false,
+  "licenseFile": false,
+  "licenseText": true,
+  "copyright": true
+}
