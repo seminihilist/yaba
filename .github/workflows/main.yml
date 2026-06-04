@@ -16,6 +16,9 @@ jobs:
       - name: Generate third-party-licenses.txt
         run: |
           cd frontend
+          ls
+          echo =====
+          ls public
           npx license-checker-rseidelsohn --production --out public/third-party-licenses.txt --customPath ./licenseFormat.json --excludePackages yaba_client
           pwd
           cat public/third-party-licenses.txt
