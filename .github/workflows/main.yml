@@ -17,6 +17,7 @@ jobs:
         run: |
           cd frontend
           npx license-checker-rseidelsohn --production --out public/third-party-licenses.txt --customPath ./licenseFormat.json --excludePackages yaba_client
+          cat public/third-party-licenses.txt
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
