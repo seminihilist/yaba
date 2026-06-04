@@ -1,0 +1,24 @@
+name: Build third-party-licenses.txt
+run-name: Build third-party-licenses.txt
+on: [push]
+jobs:
+  Build-Third-Party-Licenses:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+      - name: Delete old third-party-licenses.txt
+        run: rm frontend/public/third-party-licenses.txt
+      - name: Generate third-party-licenses.txt
+        run: |
+          cd frontend
+          npx license-checker-rseidelsohn --production --out public/third-party-licenses.txt --customPath ./licenseFormat.json --excludePackages yaba_client
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "auto: update third-party licenses"
+          file_pattern: "frontend/public/third-party-licenses.txt"
