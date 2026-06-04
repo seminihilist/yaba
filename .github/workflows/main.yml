@@ -4,6 +4,10 @@ on: [push]
 jobs:
   Build-Third-Party-Licenses:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+    
     steps:
       - name: Check out repository code
         uses: actions/checkout@v6
