@@ -11,16 +11,18 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v6
+      - name: Install NPM dependencies
+        run: | 
+          cd frontend
+          npm install
       - name: Delete old third-party-licenses.txt
         run: rm frontend/public/third-party-licenses.txt
       - name: Generate third-party-licenses.txt
         run: |
-          cd frontend
-          ls
-          echo =====
-          ls public
           npx license-checker-rseidelsohn --production --out public/third-party-licenses.txt --customPath ./licenseFormat.json --excludePackages yaba_client
-          pwd
+          echo 'Generated third-party-licenses.txt file:'
+          echo '========================================'
+          echo
           cat public/third-party-licenses.txt
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
