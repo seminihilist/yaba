@@ -1,6 +1,13 @@
 name: Build third-party-licenses.txt
 run-name: Build third-party-licenses.txt
-on: [push]
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'frontend/package.json'
+      - 'frontend/package-lock.json'
+
 jobs:
   Build-Third-Party-Licenses:
     runs-on: ubuntu-latest
