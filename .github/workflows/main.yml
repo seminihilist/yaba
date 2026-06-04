@@ -10,4 +10,4 @@ jobs:
       - name: List files in the repository
         run: |
           cd frontend
-          ls
+          npx license-checker-rseidelsohn --production --out public/third-party-licenses.txt --customPath ./licenseFormat.json --excludePackages yaba_client
