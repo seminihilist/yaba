@@ -11,10 +11,6 @@ import SetupDialog from "@/components/setup/SetupDialog";
 export default function NewBudgetWrapper({children}: Readonly<{
     children: (budget: Budget) => ReactNode
 }>) {
-    console.group("Children:")
-    console.log(children)
-    console.groupEnd()
-
     const dispatch = useAppDispatch();
 
     const budgets = Object.values(useAppSelector(state => state.app.budgets)).filter(budget => !!budget);
