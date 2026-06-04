@@ -19,6 +19,7 @@ import {Close, Delete} from "@mui/icons-material";
 import React from "react";
 import {ExpensesBar, IncomeBar} from "./IncomeExpenseBars";
 import _ from "lodash";
+import {deleteSection} from "@/store/app";
 
 /**
  * The overview window.
@@ -54,14 +55,14 @@ export default function SectionOverviewWindow(
         {incomeItems.length > 0 &&
             <>
                 <Divider/>
-                <Typography variant={'h5'}>Income in {section.name}</Typography>
+                <Typography variant={'h5'}>Income This Month</Typography>
                 <IncomeBar incomeItems={incomeItems}/>
             </>
         }
         {expenseItems.length > 0 &&
             <>
                 <Divider/>
-                <Typography variant={'h5'}>Expenses in {section.name}</Typography>
+                <Typography variant={'h5'}>Expenses This Month</Typography>
                 <ExpensesBar expenseItems={expenseItems}/>
             </>
         }
@@ -83,12 +84,9 @@ export default function SectionOverviewWindow(
             <DialogActions>
                 <Button onClick={closeDeleteSectionDialog}>Cancel</Button>
                 <Button type="submit" color={'error'} onClick={() => {
-                    dispatch({
-                        type: "app/deleteSection",
-                        payload: {
-                            id: section.id,
-                        }
-                    });
+                    dispatch(deleteSection({
+                        id: section.id,
+                    }));
 
                     closeDeleteSectionDialog();
                 }}>Delete</Button>
