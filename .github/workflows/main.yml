@@ -7,7 +7,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v6
-      - name: List files in the repository
+      - name: Generate third-party-licenses.txt
         run: |
           cd frontend
           npx license-checker-rseidelsohn --production --out public/third-party-licenses.txt --customPath ./licenseFormat.json --excludePackages yaba_client
+      - name: Finish up
+        run: echo 'Done.'
