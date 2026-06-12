@@ -118,8 +118,8 @@ function loadFromLocalStorage() {
 function saveToLocalStorage(store: AppStore) {
     try {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(store.getState()))
-    } catch (e: any) {
-        if (e.name === "QuotaExceededError") {
+    } catch (e) {
+        if (e instanceof DOMException && e.name === "QuotaExceededError") {
             alert("YABA has run out of storage!\n\nAny changes you make will not be saved until storage space" +
                 "is reclaimed.\n\nYou can reclaim storage space by deleting old budgets.") // TODO: implement deleting old budgets
         } else {
