@@ -21,7 +21,7 @@
     "@types/lodash": "^4.17.24",
     "@types/luxon": "^3.7.1",
     "dotenv": "^17.4.2",
-    "drizzle-orm": "^0.45.2",
+    "drizzle-orm": "^1.0.0-beta.1",
     "immutable": "^5.1.4",
     "jquery": "^3.7.1",
     "lodash": "^4.18.1",
@@ -42,12 +42,11 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "drizzle-kit": "^0.18.1",
+    "drizzle-kit": "^1.0.0-rc.4-ca0f029",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "license-checker-rseidelsohn": "^5.0.1",
     "tailwindcss": "^4",
-    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }
