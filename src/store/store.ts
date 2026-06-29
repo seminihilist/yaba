@@ -10,58 +10,6 @@ import {AppState, UserState} from "@/domain/types";
  */
 const LOCAL_STORAGE_KEY = "state";
 
-// const INITIAL_STATE: AppState = {
-//     budgets: {
-//         0: {
-//             id: 0,
-//             sections: [1, 2],
-//             startTime: (() => {
-//                 const date = new Date(Date.now());
-//                 date.setHours(0, 0, 0, 0);
-//                 return date;
-//             })(),
-//             endTime: 100,
-//             state: 'active',
-//         },
-//     },
-//     sections: {
-//         1: {
-//             id: 1,
-//             budgetID: 0,
-//             name: "Income",
-//             itemIDs: [3]
-//         },
-//         2: {
-//             id: 2,
-//             budgetID: 0,
-//             name: "Food",
-//             itemIDs: [4]
-//         },
-//     },
-//     items: {
-//         3: {
-//             id: 3,
-//             name: "Paycheck",
-//             kind: 'income',
-//             amount: 2000,
-//             isCumulative: false,
-//             sectionID: 1,
-//             transactionIDs: []
-//         },
-//         4: {
-//             id: 4,
-//             name: "Onions",
-//             kind: 'expense',
-//             amount: 500,
-//             isCumulative: false,
-//             sectionID: 2,
-//             transactionIDs: []
-//         },
-//     },
-//     transactions: {},
-//     idCounter: 5
-// };
-
 export const makeStore = () => {
     const store = configureStore<{ app: AppState, user: UserState }>({
         reducer: {

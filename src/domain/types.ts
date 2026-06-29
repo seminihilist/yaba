@@ -1,4 +1,5 @@
 export type ItemKind = 'income' | 'expense';
+export type ItemId = string;
 
 /**
  * An item in the budget from which money can be spent or gained.
@@ -13,7 +14,7 @@ export type Item = {
      * The ID of this budget item as stored in the database. This will be -1 if the budget item has not yet been
      * committed to the database.
      */
-    id: number;
+    id: ItemId;
 
     /**
      * The kind of item this is.
@@ -42,11 +43,12 @@ export type Item = {
     transactionIDs: Array<number>;
 }
 
+export type SectionId = string;
 export type Section = {
     /**
      * The ID of this budget section as stored in the database.
      */
-    id: number;
+    id: SectionId;
 
     /**
      * The ID of the budget that contains this section.
@@ -64,6 +66,7 @@ export type Section = {
     itemIDs: Array<number>;
 }
 
+export type TransactionId = string;
 /**
  * A transaction that added or removed money from a budget item.
  */
@@ -71,12 +74,12 @@ export type Transaction = {
     /**
      * The ID of this transaction as stored in the database.
      */
-    id: number;
+    id: TransactionId;
 
     /**
      * The database ID of the `BudgetItem` from which the money was spent.
      */
-    itemID: number;
+    itemId: ItemId;
 
     /**
      * The amount of money that was spent.

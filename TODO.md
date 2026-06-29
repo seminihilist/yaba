@@ -1,0 +1,1 @@
+[ ] Add a tutorial on how to budget and how to use the app for new users 

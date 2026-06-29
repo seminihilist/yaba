@@ -3,12 +3,18 @@ import {Box, Drawer} from "@mui/material";
 import BudgetWindow from "@/components/budget/BudgetWindow";
 import React from "react";
 import OverviewWindow from "@/components/overview/OverviewWindow";
+import {useQuery} from "@tanstack/react-query";
 
 const DESKTOP_OVERVIEW_WIDTH = 400; // px
 
 export default function MainView({budget}: Readonly<{ budget: Budget }>) {
     const [overviewOpenID, setOverviewOpenID] = React.useState(budget.id);
     const [overviewOpenKind, setOverviewOpenKind] = React.useState<'budget' | 'section' | 'item'>('budget');
+
+    const query = useQuery({
+        queryKey: ['budget'],
+        queryFn:
+    });
 
     return (
         <div className="flex flex-row w-full h-full">

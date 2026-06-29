@@ -52,6 +52,11 @@
               psql -h 127.0.0.1 -d "$db_name" -c "GRANT USAGE, CREATE ON SCHEMA public TO $username;"
 
               export DATABASE_URL="postgresql://$username:$password@localhost:5432/$db_name"
+              export REQUIRE_SECURE=0 # don't require HTTPS for development
+              export JWT_SECRET_KEY='This_Is_Insecure_And_For_Development_Purposes_Only______________'
+              export JWT_ISSUER='YABA'
+              export JWT_AUDIENCE='YABA'
+              export JWT_TOKEN_LIFETIME=300
             '';
           };
         };

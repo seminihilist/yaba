@@ -1,44 +1,53 @@
-import {pgTable, timestamp, uuid} from "drizzle-orm/pg-core"
+import {bytea, integer, pgTable, timestamp, uuid, varchar} from "drizzle-orm/pg-core"
 import {defineRelations} from "drizzle-orm"
 
 export const users = pgTable("users", {
     id: uuid().primaryKey(),
 
-    creationDate: timestamp(),
+    username: varchar().notNull().unique(),
+    passwordHash: bytea().notNull(),
+    passwordSalt: bytea().notNull(),
+
+    creationTimestamp: timestamp().notNull().defaultNow(),
 });
 
 export const budgets = pgTable("budgets", {
     id: uuid().primaryKey(),
-    userId: uuid(),
+    userId: uuid().notNull().references(() => users.id),
 
-    startDate: timestamp(),
-    endDate: timestamp(),
+    startTimestamp: timestamp().notNull(),
+    endTimestamp: timestamp().notNull(),
 
-    creationDate: timestamp(),
+    creationTimestamp: timestamp().notNull().defaultNow(),
 });
 
 export const sections = pgTable("sections", {
     id: uuid().primaryKey(),
-    budgetId: uuid(),
+    budgetId: uuid().notNull().references(() => budgets.id),
 
-    creationDate: timestamp(),
+    name: varchar().notNull(),
+
+    creationTimestamp: timestamp().notNull().defaultNow(),
 });
 
 export const items = pgTable("items", {
     id: uuid().primaryKey(),
-    sectionId: uuid(),
+    sectionId: uuid().notNull().references(() => sections.id),
 
-    creationDate: timestamp(),
+    name: varchar().notNull(),
+    amountCents: integer().notNull(),
+
+    creationTimestamp: timestamp().notNull().defaultNow(),
 });
 
 export const transactions = pgTable("transactions", {
     id: uuid().primaryKey(),
-    itemId: uuid(),
+    itemId: uuid().notNull().references(() => items.id),
 
-    creationDate: timestamp(),
+    creationTimestamp: timestamp().notNull().defaultNow(),
 });
 
-export const relations = defineRelations({ budgets, sections, items, transactions }, r => ({
+export const relations = defineRelations({budgets, sections, items, transactions}, r => ({
     budgets: {
         sections: r.many.sections({
             from: r.budgets.id,
